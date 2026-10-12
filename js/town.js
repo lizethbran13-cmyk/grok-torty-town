@@ -304,7 +304,8 @@ function hill(w) { const S = w.spots;
   for (let i = 0; i < 4; i++) palm(w, X0 - 2 + (i % 2) * (X1 - X0 + 4), -102 - Math.floor(i / 2) * 16, 0.95, 0.4);
   sign3d(w, 'HOT SPRINGS', 2, 2.0, -96.5, 0, 0.3, 0xffffff, 0x0f766e); w.add('m', cyl(10), 0x7c4a1e, 0.2, 0, -96.6, 0, 0, 0, 0.1, 2.0, 0.1); w.add('m', cyl(10), 0x7c4a1e, 3.8, 0, -96.6, 0, 0, 0, 0.1, 2.0, 0.1);
   // backdrop mesas
-  for (let i = 0; i < 9; i++) mesa(w, -60 + i * 15, -127, 14, 10 + (i % 3) * 3, 8, pick([0xd9824a, 0xc96f3a, 0xe08f55]));
+  for (let i = 0; i < 9; i++) { const x = -60 + i * 15; if (x < 30) mesa(w, x, -127, 14, 10 + (i % 3) * 3, 8, pick([0xd9824a, 0xc96f3a, 0xe08f55])); }
+  for (let i = 0; i < 8; i++) w.add('m', sph(24), pick([0xe8c48c, 0xdfb57c, 0xeccd98]), 34 + i * 13, -2, -131, 0, 0, 0, 9.5, 8 + (i % 3) * 2, 8);
   [[2, 3.6, -126.5], [-5, 1.0, -104.5], [18, 1.0, -92], [-30, 1.2, -90], [9, 2.0, -110]].forEach((p) => sunShell(w, ...p));
   w.secrets.push({ id: 'peak', x: 9, y: 2.4, z: -125, r: 2.0, msg: '♨️ Secret: the tiny top-top spring! Perfect for one very small tortoise' });
 }
@@ -355,7 +356,7 @@ function dunes(w) { const S = w.spots;
     for (let i = 0; i < 4; i++) w.add('m', torus(0.06, 40, PI * 0.9), 0xe6b97a, x, h * (0.2 + i * 0.18), z, PI / 2, 0, 0.3 * i, rx * (0.96 - i * 0.18), rz * (0.96 - i * 0.18), 0.2); w.solid(x - rx * 0.7, 0, z - rz * 0.7, x + rx * 0.7, h * 0.8, z + rz * 0.7, { cam: false }); };
   secretDoor(w); dune(110, 50, 7, 5, 3.2); dune(94, 74, 9, 6, 4.2); dune(114, 82, 6, 8, 3.6); dune(92, 110, 8, 6, 3.8); dune(116, 118, 7, 5, 3.0); dune(76, 124, 6, 5, 2.6);
   // canyon wall (east) with the rock arch + rim mesas (north-east)
-  for (let i = 0; i < 18; i++) if (Math.abs(-124 + i * 14.5 + 58) > 32) mesa(w, 128, -124 + i * 14.5, 8, 11 + (i % 3) * 3, 15, pick([0xd9824a, 0xc96f3a, 0xe08f55]));
+  for (let i = 0; i < 18; i++) { const z = -124 + i * 14.5; if (z > -20) mesa(w, 128, z, 8, 11 + (i % 3) * 3, 15, pick([0xd9824a, 0xc96f3a, 0xe08f55])); else w.add('m', sph(24), pick([0xe8c48c, 0xdfb57c, 0xeccd98]), 131, -2, z, 0, 0, 0, 9, 9 + (i % 3) * 2.5, 9.5); } // calm rolling dunes behind Tortuga Tech instead of stacked cliffs
   { const x = 108, z = 100; [-3.4, 3.4].forEach((o) => { w.add('m', blobGeo(7, 0.12, 2), 0xd9824a, x, 3, z + o, 0, 0, 0, 1.4, 3.2, 1.3); w.solid(x - 1.2, 0, z + o - 1.1, x + 1.2, 6, z + o + 1.1); }); w.add('m', torus(0.32, 32, PI), 0xd9824a, x, 5.2, z, 0, PI / 2, 0, 3.6, 2.2, 2.8);
     w.secrets.push({ id: 'arch', x, y: 0, z, r: 1.8, msg: '🌄 Secret: the Whispering Arch! Say "slow and steady" and it echoes back' }); }
   for (let i = 0; i < 9; i++) w.add('m', sph(24), pick([0xe8c48c, 0xdfb57c, 0xeccd98]), 64 + i * 8, -1.4, -100 - (i % 2) * 6, 0, 0, 0, 6.5, 3.6 + (i % 3) * 1.1, 5.5); // soft dunes (calm backdrop behind the Test Yard)

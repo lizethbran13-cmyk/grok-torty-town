@@ -1,22 +1,22 @@
 // Grok Torty Town runtime: the town, players, townsfolk, the shuttle cart, ambient desert life, day -> sunset, collectibles,
 // the Sunstone mystery, the Slow-Mo Derby + Harvest Rush (3D mini-games), a hidden puzzle, co-op hooks.
 import * as THREE from 'three';
-import { E, setEnvironment, followShadow, skyUniforms } from './engine.js?v=tt5';
-import { World } from './world.js?v=tt5';
-import { buildTown, regionAt, areaName, REGIONS, DOORS, NEAR, STOPS, TRACK } from './town.js?v=tt5';
-import { UY } from './under.js?v=tt5';
-import { Player } from './player.js?v=tt5';
-import { FX } from './fx.js?v=tt5';
-import { makeRat, animRat, MB, toGroup } from './models.js?v=tt5';
-import { makePup, animPup, birdGeo } from './dogs.js?v=tt5';
-import { makeTortoise, animTortoise, makeRoadrunner, animRoadrunner, makeLizard, animLizard, makeSunstone } from './critters.js?v=tt5';
-import { P } from './geo.js?v=tt5';
-import { rcyl, capsule, torus, sph, cone, heart, star, blobGeo } from './shapes.js?v=tt5';
-import { updateFrustum, inView, LightPool } from './perf.js?v=tt5';
-import { sfx, playMusic } from './audio.js?v=tt5';
-import { S, persist } from './save.js?v=tt5';
-import { NPCS, talk, clueText, SUN_CLUES, HATS, BADGES, GLYPH } from './story.js?v=tt5';
-import { readMove, edge, held, IN } from './input.js?v=tt5';
+import { E, setEnvironment, followShadow, skyUniforms } from './engine.js?v=tt6';
+import { World } from './world.js?v=tt6';
+import { buildTown, regionAt, areaName, REGIONS, DOORS, NEAR, STOPS, TRACK } from './town.js?v=tt6';
+import { UY } from './under.js?v=tt6';
+import { Player } from './player.js?v=tt6';
+import { FX } from './fx.js?v=tt6';
+import { makeRat, animRat, MB, toGroup } from './models.js?v=tt6';
+import { makePup, animPup, birdGeo } from './dogs.js?v=tt6';
+import { makeTortoise, animTortoise, makeRoadrunner, animRoadrunner, makeLizard, animLizard, makeSunstone } from './critters.js?v=tt6';
+import { P } from './geo.js?v=tt6';
+import { rcyl, capsule, torus, sph, cone, heart, star, blobGeo } from './shapes.js?v=tt6';
+import { updateFrustum, inView, LightPool } from './perf.js?v=tt6';
+import { sfx, playMusic } from './audio.js?v=tt6';
+import { S, persist } from './save.js?v=tt6';
+import { NPCS, talk, clueText, SUN_CLUES, HATS, BADGES, GLYPH } from './story.js?v=tt6';
+import { readMove, edge, held, IN } from './input.js?v=tt6';
 const PI = Math.PI;
 const TOYS = [[60, 0, 76], [-70, 0, 61], [108, 0, -4]];
 const DAY = 420; // seconds per day -> sunset cycle

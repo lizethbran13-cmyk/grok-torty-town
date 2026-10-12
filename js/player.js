@@ -1,10 +1,10 @@
 // Rat player: tight platformer physics vs box colliders + Ratita Industries gadgets.
 import * as THREE from 'three';
-import { topOf } from './world.js?v=tt4';
-import { makeRat, animRat, setOutfit } from './models.js?v=tt4';
-import { makeHuman, animHuman } from './humans.js?v=tt4';
-import { sfx } from './audio.js?v=tt4';
-import { up } from './save.js?v=tt4';
+import { topOf } from './world.js?v=tt5';
+import { makeRat, animRat, setOutfit } from './models.js?v=tt5';
+import { makeHuman, animHuman } from './humans.js?v=tt5';
+import { sfx } from './audio.js?v=tt5';
+import { up } from './save.js?v=tt5';
 const R = 0.34, HGT = 0.72, STEP = 0.45;
 const G_UP = 26, G_DN = 34, JUMP = 10.2, JUMP2 = 9.0, JET = 8.4, MAXF = 26;
 const tmp = [];
@@ -108,7 +108,7 @@ export class Player {
     game.hud.dirty = true; return true;
   }
   knock(src) { const sx = src && src.x != null ? src.x : this.x - Math.sin(this.yaw), sz = src && src.z != null ? src.z : this.z - Math.cos(this.yaw); const dx = this.x - sx, dz = this.z - sz, d = Math.hypot(dx, dz) || 1; this.vx = dx / d * 8; this.vz = dz / d * 8; this.vy = 7; this.onGround = false; }
-  fall(game, why) { if (this.respawnT > 0) return; this.respawnT = 0.9; this.vx = this.vy = this.vz = 0; if (why === 'splash') { sfx('splash'); game.fx.splash(this.x, this.y, this.z); game.toastMsg('Splash! Rats don\u2019t love baths 🛁'); } else game.toastMsg('Whoops! Back to the checkpoint'); this.hearts = Math.max(1, this.hearts - 1); this.fellHidden = true; this.root.visible = false; game.hud.dirty = true; }
+  fall(game, why) { if (this.respawnT > 0) return; if (why === 'fell' && game.tryDescend && game.tryDescend(true)) return; this.respawnT = 0.9; this.vx = this.vy = this.vz = 0; if (why === 'splash') { sfx('splash'); game.fx.splash(this.x, this.y, this.z); game.toastMsg('Splash! Rats don\u2019t love baths 🛁'); } else game.toastMsg('Whoops! Back to the checkpoint'); this.hearts = Math.max(1, this.hearts - 1); this.fellHidden = true; this.root.visible = false; game.hud.dirty = true; }
   doRespawn(game) { const p = this.cp || game.world.start; this.place(p, this.cpYaw || game.world.startYaw || 0); if (this.dead) { this.hearts = this.maxHearts; this.dead = false; } this.hurtT = 2; this.root.visible = true; game.fx.burst(this.x, this.y + 0.4, this.z, 0xffd23f, 14); game.hud.dirty = true; game.cam.snap = true; }
   showLine(z) { const L = this.hookLine; L.visible = true; L.position.set(this.x, this.y + 0.4, this.z); L.lookAt(z.hx, z.hy, z.hz); L.scale.z = Math.hypot(z.hx - this.x, z.hy - this.y - 0.4, z.hz - this.z); }
   anim(dt) {

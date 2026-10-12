@@ -1,22 +1,22 @@
 // Grok Torty Town runtime: the town, players, townsfolk, the shuttle cart, ambient desert life, day -> sunset, collectibles,
 // the Sunstone mystery, the Slow-Mo Derby + Harvest Rush (3D mini-games), a hidden puzzle, co-op hooks.
 import * as THREE from 'three';
-import { E, setEnvironment, followShadow, skyUniforms } from './engine.js?v=tt4';
-import { World } from './world.js?v=tt4';
-import { buildTown, regionAt, areaName, REGIONS, DOORS, NEAR, STOPS, TRACK } from './town.js?v=tt4';
-import { UY } from './under.js?v=tt4';
-import { Player } from './player.js?v=tt4';
-import { FX } from './fx.js?v=tt4';
-import { makeRat, animRat, MB, toGroup } from './models.js?v=tt4';
-import { makePup, animPup, birdGeo } from './dogs.js?v=tt4';
-import { makeTortoise, animTortoise, makeRoadrunner, animRoadrunner, makeLizard, animLizard, makeSunstone } from './critters.js?v=tt4';
-import { P } from './geo.js?v=tt4';
-import { rcyl, capsule, torus, sph, cone, heart, star, blobGeo } from './shapes.js?v=tt4';
-import { updateFrustum, inView, LightPool } from './perf.js?v=tt4';
-import { sfx, playMusic } from './audio.js?v=tt4';
-import { S, persist } from './save.js?v=tt4';
-import { NPCS, talk, clueText, SUN_CLUES, HATS, BADGES, GLYPH } from './story.js?v=tt4';
-import { readMove, edge, held, IN } from './input.js?v=tt4';
+import { E, setEnvironment, followShadow, skyUniforms } from './engine.js?v=tt5';
+import { World } from './world.js?v=tt5';
+import { buildTown, regionAt, areaName, REGIONS, DOORS, NEAR, STOPS, TRACK } from './town.js?v=tt5';
+import { UY } from './under.js?v=tt5';
+import { Player } from './player.js?v=tt5';
+import { FX } from './fx.js?v=tt5';
+import { makeRat, animRat, MB, toGroup } from './models.js?v=tt5';
+import { makePup, animPup, birdGeo } from './dogs.js?v=tt5';
+import { makeTortoise, animTortoise, makeRoadrunner, animRoadrunner, makeLizard, animLizard, makeSunstone } from './critters.js?v=tt5';
+import { P } from './geo.js?v=tt5';
+import { rcyl, capsule, torus, sph, cone, heart, star, blobGeo } from './shapes.js?v=tt5';
+import { updateFrustum, inView, LightPool } from './perf.js?v=tt5';
+import { sfx, playMusic } from './audio.js?v=tt5';
+import { S, persist } from './save.js?v=tt5';
+import { NPCS, talk, clueText, SUN_CLUES, HATS, BADGES, GLYPH } from './story.js?v=tt5';
+import { readMove, edge, held, IN } from './input.js?v=tt5';
 const PI = Math.PI;
 const TOYS = [[60, 0, 76], [-70, 0, 61], [108, 0, -4]];
 const DAY = 420; // seconds per day -> sunset cycle
@@ -34,6 +34,10 @@ export class Game {
     playMusic('town');
   }
   add(o) { this.scene.add(o); this.extra.push(o); return o; }
+  // the opened secret door: walking (or falling) into the doorway takes you down, never to a checkpoint
+  tryDescend(force) { const sd = this.world.spots.sdoor; if (!sd || !S.flags.door || this.under || this._desc) return false; const me = this.me;
+    if (!force && !(me.x > sd[0] - 1.0 && Math.abs(me.z - sd[1]) < 1.7)) return false; if (force && Math.hypot(me.x - sd[0], me.z - sd[1]) > 9) return false;
+    this._desc = true; setTimeout(() => { this._desc = false; }, 1500); me.vx = me.vy = me.vz = 0; this.doAct({ kind: 'descend' }); return true; }
   toastMsg(m) { this.hud.toast(m); }
   sfx(n) { sfx(n); }
   // ------------------------------------------------ townsfolk
@@ -212,6 +216,7 @@ export class Game {
       if (yard && this.tt.boulder) { const k = cyc(9), [x, z] = t.ramp; const zz = k < 0.8 ? z + 6.6 - k / 0.8 * 6.0 : z + 0.6, yy = k < 0.8 ? 2.95 - k / 0.8 * 1.9 + 0.0 : 1.05 + Math.abs(Math.sin((k - 0.8) * 30)) * 0.3 * (1 - (k - 0.8) / 0.2); this.tt.boulder.position.set(x, yy, zz); this.tt.boulder.rotation.x = -k * 9; this.tt.boulder.scale.setScalar(k > 0.96 ? Math.max(0.01, (1 - k) / 0.04) : k < 0.04 ? Math.max(0.01, k / 0.04) : 1); if ((this._kb || 0) < 0.8 && k >= 0.8) { this.fx.burst(x, 1.6, z - 0.4, 0xffd23f, 12, 4); } this._kb = k; } }
     // dials + door
     this.dials.forEach((g, i) => { const a = this.dialA[i]; g.children.forEach((m) => { if (m.userData.k !== undefined) m.visible = m.userData.k === a; }); if (g.userData.a !== a) { g.userData.a = a; g.userData.pop = 1; } g.userData.pop = Math.max(0, (g.userData.pop || 0) - dt * 3); g.rotation.x = Math.sin(g.userData.pop * PI) * 0.6; });
+    if (this.door && S.flags.door && !this.under) this.tryDescend(false);
     if (this.door) { const want = S.flags.door ? -3.3 : 0; this.door.position.y += (want - this.door.position.y) * Math.min(1, dt * 1.5); }
     const nearT = !this.under && Math.hypot(me.x - TRACK.cx, me.z - TRACK.cz) < 75; this.racers.forEach((r) => r.root.visible = nearT); if (!this.race && nearT) this.placeRacers(dt); }
   // ------------------------------------------------ SLOW-MO DERBY (3D): 1 lap, cheer on the beat to boost Speedy (#3)

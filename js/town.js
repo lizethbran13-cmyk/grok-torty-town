@@ -1,12 +1,12 @@
 // Grok Torty Town: Martina "Torty"'s desert-oasis hometown. A palm-ringed Oasis Square, Market Street, the Burrows (homes),
 // Hot Spring Hill, the Slow-Mo Racetrack, the Lettuce Farm and the Dunes & Canyon edge. 18 enterable buildings, each its own
 // culled region; outdoors batch into big merged chunks, tiny decor goes into far-culled "detail" chunks. All real 3D geometry.
-import { tortuga } from './tortuga.js?v=tt4';
-import { districts } from './districts.js?v=tt4';
+import { tortuga } from './tortuga.js?v=tt5';
+import { districts } from './districts.js?v=tt5';
 import * as THREE from 'three';
-import * as K from './kit.js?v=tt4';
-import { interiors } from './interiors.js?v=tt4';
-import { underground } from './under.js?v=tt4';
+import * as K from './kit.js?v=tt5';
+import { interiors } from './interiors.js?v=tt5';
+import { underground } from './under.js?v=tt5';
 const { wall, D, G, floor, ceiling, sign3d, rbox, rcyl, lathe, sph, cyl, cone, torus, capsule, tube, leaf, star, heart, blobGeo, pick } = K;
 const R = K.R, PI = Math.PI; let I = null;
 export const FL = 0.02;
@@ -372,7 +372,7 @@ function secretDoor(w) { const S = w.spots, x = 123.9, z = 86.5; S.sdoor = [x, z
   for (let i = 0; i < 6; i++) { const a = i / 6 * PI * 2; w.add('m', sph(10), 0xd9925a, x - 0.12, 4.3 + Math.sin(a) * 0.35, z + Math.cos(a) * 0.4, 0, 0, 0, 0.05, 0.18, 0.2); } w.add('m', sph(12), 0xd9925a, x - 0.12, 4.3, z, 0, 0, 0, 0.06, 0.3, 0.34);
   [[120.6, 81.0, 1.4], [117.4, 79.6, 1.6], [120.4, 92.2, 1.4], [117.2, 93.6, 1.2]].forEach(([bx, bz, bs]) => bigRock(w, bx, bz, bs, 0xc97a44));
   for (let i = 0; i < 3; i++) { const dz = z - 1.6 + i * 1.6, dx = 121.9; w.add('m', rbox(0.9, 0.7, 0.9, 0.1), 0xb86a3a, dx, 0.35, dz); w.solid(dx - 0.45, 0, dz - 0.45, dx + 0.45, 0.7, dz + 0.45, { cam: false }); S.dials.push([dx, 1.3, dz]); sign3d(w, String(i + 1), dx - 0.2, 2.35, dz, -PI / 2, 0.42, 0xffffff, 0x7c2d12); w.I({ kind: 'dial', i, x: dx - 1.1, y: 0, z: dz, r: 0.95, label: '🪨 Turn the stone dial' }); }
-  w.solid(x - 0.3, 0, z - 2.2, x + 0.6, 4.6, z + 2.2, { wall: true }); }
+  w.solid(x - 0.3, 0, z - 2.2, x + 0.6, 4.6, z + 2.2, { wall: true }); w.solid(x - 0.3, 0, z - 9, x + 8, 9, z - 2.2, { wall: true, cam: false }); w.solid(x - 0.3, 0, z + 2.2, x + 8, 9, z + 9, { wall: true, cam: false }); w.solid(x + 0.6, 0, z - 2.2, x + 8, 9, z + 2.2, { wall: true, cam: false }); w.solid(x - 8, -3, z - 9, x + 8, 0, z + 9, { floor: true }); }
 export function wedge3(W, H, L) { const s = new THREE.Shape(); s.moveTo(-L / 2, 0); s.lineTo(L / 2, 0); s.lineTo(-L / 2, H); s.lineTo(-L / 2, 0); const g = new THREE.ExtrudeGeometry(s, { depth: W, bevelEnabled: false }); g.translate(0, 0, -W / 2); g.rotateY(-PI / 2); return g; }
 // ------------------------------------------------------------------------------------------------ the valley rim (keeps everyone inside, looks like a canyon)
 function border(w) { for (let i = 0; i < 18; i++) { mesa(w, -126 + i * 14.6, 128, 15, 9 + (i % 4) * 2.5, 8, pick([0xd9824a, 0xc96f3a, 0xe08f55])); mesa(w, -128, -116 + i * 13.5, 8, 9 + (i % 3) * 3, 14, pick([0xd9824a, 0xc96f3a, 0xe08f55])); }

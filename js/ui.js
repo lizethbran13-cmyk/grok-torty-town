@@ -81,5 +81,5 @@ export class UI {
       on(c, '#wBack', () => this.done()); }); }
   // ---------------- goo mixer (hands-on)
   // ---------------- 2D mini-games
-  minigame(id, g) { const f = MG[{ polish: 'polish', catch: 'catchGame', bubbles: 'bubbles' }[id]]; if (!f) return; this.open(); f(this, g, (html, mount, cls) => panel(html, mount, 'mgP ' + (cls || '')), () => { this.done(); g.hud.dirty = true; }); }
+  minigame(id, g) { const f = MG[{ polish: 'polish', catch: 'catchGame', bubbles: 'bubbles', tougher: 'tougher' }[id]]; if (!f) return; this.open(); f(this, g, (html, mount, cls) => panel(html, mount, 'mgP ' + (cls || '')), () => { this.done(); g.hud.dirty = true; }); }
 }

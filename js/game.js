@@ -60,7 +60,7 @@ export class Game {
     if (q >= 4) { set('torty', 2.0, -12.6, 0.2, 0, 'out'); set('pebble', 0.6, -12.2, 0, 0, 'out'); set('mama', -1.2, -12.6, -0.3, 0, 'out'); set('papa', 3.4, -11.6, 0.5, 0, 'out'); set('gramps', -2.6, -11.4, -0.6, 0, 'out'); set('mayor', 0.6, -19.6, PI, 0, 'out'); N.gramps.d.mode = 'idle'; } }
   wants(n) { const id = n.id, q = S.q.sun | 0; if (n.hidden) return false;
     if (id === 'mayor') return q === 0 || q === 3; if (id === 'pebble') return q === 2; if (id === 'candy') return !S.flags.toys && (S.toys.length >= 3 || !S.talks.candy) || (q === 1 && !S.clues.sniff);
-    if (id === 'mama') return !S.flags.garden && (S.plants.length >= 4 || !S.talks.mama); if (id === 'torty') return !S.talks.torty; if (id === 'gramps') return !S.flags.legend;
+    if (id === 'torty') return !S.talks.torty || (!!S.flags.tough && !S.badges.intern) || (q === 1 && (S.talks.torty | 0) < 2); if (id === 'plato') return !S.flags.tough; if (id === 'mama') return !S.flags.garden && (S.plants.length >= 4 || !S.talks.mama); if (id === 'gramps') return !S.flags.legend;
     if (id === 'luna') return !S.rats.luna || (S.clues.chart && !S.flags.luna); if (id === 'pirat') return !S.rats.pirat || !S.flags.race; if (id === 'snowie') return !S.rats.snowie || (q >= 1 && !(S.sus.snowie | 0)) || !S.flags.snowie;
     if (id === 'rocky' || id === 'glimmer') return q >= 1 && !(S.sus[id] | 0); if (id === 'penny') return (S.sus.rocky | 0) === 1; if (id === 'coral') return (S.sus.glimmer | 0) === 1; if (id === 'taffy') return (S.sus.snowie | 0) === 1; if (id === 'fern') return !S.flags.farm; return false; }
   updateNPCs(dt) { const me = this.me, T = this.T;
@@ -126,6 +126,17 @@ export class Game {
       for (let i = 0; i <= 18; i++) { const a = i / 18 * PI; b.g.add(P.sphere, [0xff6b35, 0xffb020, 0xffd23f, 0xff5d8f][i % 4], -4.5 * Math.cos(a), Math.sin(a) * 4.5, -24.5, 0, 0, 0, 0.4, 0.46, 0.4); }
       [[-3, -22.4, 0xff5d8f], [3, -22.2, 0x2dd4bf], [2.4, -20.8, 0xffd23f], [-2.6, -20.6, 0xa66bff]].forEach(([px, pz, c]) => { b.g.add(P.rbox, c, px, 0.35, pz, 0, 0.5, 0, 0.7, 0.7, 0.7); b.g.add(P.rbox, 0xffffff, px, 0.35, pz, 0, 0.5, 0, 0.72, 0.72, 0.14); });
       g.add(toGroup(b)); this.party = this.add(g); this.party.visible = (S.q.sun | 0) >= 4; }
+    // Tortuga Tech live tests: drop carriages, crush press heads, a rolling foam boulder (cartoony + kid-friendly)
+    { const t = s.tt || {}; const mk = (f) => { const b = MB(); f(b); return this.add(toGroup(b)); }; const armored = (b, c) => { b.m.add(P.rbox, c, 0, 0.5, 0, 0, 0, 0, 1, 1, 1); for (let k = 0; k < 4; k++) b.g.add(new THREE.CylinderGeometry(0.22, 0.2, 0.06, 6), [0xb98545, 0x0f9d8a, 0xd1a05e, 0xffb020][k], -0.22 + (k % 2) * 0.44, 0.3 + Math.floor(k / 2) * 0.42, 0.52, PI / 2, 0, 0); };
+      this.tt = { t };
+      if (t.drop) this.tt.drop = mk((b) => { b.x.add(P.rbox, 0xfacc15, 0, 0.1, 0, 0, 0, 0, 2.7, 0.2, 2.7); b.x.add(P.cyl, 0x94a3b8, 0, 0.1, 0, 0, 0, 0, 0.04, 6, 0.04); armored(b, 0x60a5fa); });
+      if (t.press) this.tt.press = mk((b) => { b.x.add(P.rbox, 0xa855f7, 0, 0, 0, 0, 0, 0, 3.4, 0.5, 2.2); b.g.add(P.rbox, 0xfacc15, 0, -0.27, 0, 0, 0, 0, 3.2, 0.06, 2.0); });
+      if (t.press) { this.tt.pressItem = mk((b) => armored(b, 0xff5d8f)); this.tt.pressItem.position.set(t.press[0], 0.62, t.press[2]); this.tt.pressItem.scale.setScalar(0.7); }
+      if (t.yardDrop) this.tt.ydrop = mk((b) => { armored(b, 0xffb020); b.l.add(P.sphere, 0xffffff, 0, 1.2, 0, 0, 0, 0, 0.1); });
+      if (t.yardPress) this.tt.ypress = mk((b) => { b.x.add(P.rbox, 0x7c3aed, 0, 0, 0, 0, 0, 0, 2.6, 0.5, 1.8); b.x.add(P.cyl, 0xcbd5e1, 0, 1.2, 0, 0, 0, 0, 0.25, 2.4, 0.25); });
+      if (t.yardPress) { this.tt.ypItem = mk((b) => { b.g.add(P.sphere, 0x22c55e, 0, 0.5, 0, 0, 0, 0, 0.6, 0.5, 0.6); for (let k = 0; k < 6; k++) b.g.add(new THREE.CylinderGeometry(0.2, 0.18, 0.06, 6), 0xb98545, Math.cos(k) * 0.42, 0.75, Math.sin(k) * 0.42, Math.sin(k) * 0.6, 0, -Math.cos(k) * 0.6); }); this.tt.ypItem.position.set(t.yardPress[0], 0.4, t.yardPress[1]); }
+      if (t.ramp) this.tt.boulder = mk((b) => { b.m.add(blobGeo(9, 0.15, 2), 0xb07a4a, 0, 0, 0, 0, 0, 0, 0.9); for (let k = 0; k < 5; k++) b.m.add(P.sphere, 0x8a5a32, Math.cos(k * 1.3) * 0.75, Math.sin(k * 2.1) * 0.5, Math.sin(k * 1.3) * 0.6, 0, 0, 0, 0.18, 0.12, 0.18); });
+      this.tt.ph = 0; }
     // race: 4 numbered racers (Speedy is #3) + a cheer ring over Speedy
     this.racers = [0, 1, 2, 3].map((i) => { const r = makeTortoise({ shell: ['coral', 'sky', 'gold', 'plum'][i], num: i + 1, numC: [0xef4444, 0x2563eb, 0x16a34a, 0xa855f7][i], hat: 'helmet', hatC: [0xef4444, 0x2563eb, 0x16a34a, 0xa855f7][i] }); r.root.scale.setScalar(0.24); this.add(r.root); return r; }); this.placeRacers(0);
     this.cheerRing = this.add(new THREE.Mesh(new THREE.TorusGeometry(0.55, 0.07, 10, 32).rotateX(PI / 2), new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false }))); this.cheerRing.visible = false;
@@ -188,6 +199,16 @@ export class Game {
     if (this.under && Math.random() < dt * 5) this.fx.emit(me.x + (Math.random() - 0.5) * 14, UY + 0.3 + Math.random() * 4, me.z + (Math.random() - 0.5) * 14, 0, 0.3, 0, 0.06, [0x5eead4, 0xa78bfa, 0xf472b6][(Math.random() * 3) | 0], 2.0, -0.1, 0.2);
     if (this.party.visible && out && Math.random() < dt * 3) this.fx.confetti((Math.random() - 0.5) * 10, 5, -20 + (Math.random() - 0.5) * 6, 6);
     if (this.moon) { this.moon.rotation.y = T * 0.6; this.moon.position.y = s.moonstone[1] + Math.sin(T * 1.5) * 0.08; this.moon.visible = this.under; }
+    if (this.tt) { const t = this.tt.t, nearTT = !this.under && Math.hypot(me.x - 95, me.z + 56) < 80, inTT = !!this.vis && this.vis.has('tortuga'); const cyc = (per, off = 0) => ((T + off) % per) / per;
+      const dropY = (k, top, bot) => k < 0.7 ? bot + (top - bot) * (k / 0.7) : k < 0.76 ? top - (top - bot) * ((k - 0.7) / 0.06) ** 2 : bot + Math.abs(Math.sin((k - 0.76) * 26)) * 0.5 * (1 - (k - 0.76) / 0.24);
+      const impact = (k, kp, x, y, z) => { if (kp < 0.76 && k >= 0.76) { this.fx.puff(x, y, z, 10, 0xf5f0e6); if (Math.hypot(me.x - x, me.z - z) < 14) sfx('splat'); } };
+      if (this.tt.drop) { this.tt.drop.visible = inTT; if (inTT) { const k = cyc(7), [x, y, z] = t.drop; this.tt.drop.position.set(x, y + dropY(k, 4.6, 0.45), z); impact(k, this._kd || 0, x, y + 0.5, z); this._kd = k; } }
+      if (this.tt.press) { this.tt.press.visible = this.tt.pressItem.visible = inTT; if (inTT) { const k = cyc(6, 2), [x, , z] = t.press; const y = k < 0.45 ? 5.2 - k / 0.45 * 3.9 : k < 0.6 ? 1.3 : 1.3 + (k - 0.6) / 0.4 * 3.9; this.tt.press.position.set(x, y + 0.25, z); this.tt.pressItem.scale.set(0.7, k > 0.43 && k < 0.62 ? 0.62 : 0.7, 0.7); } }
+      if (inTT && t.blast && Math.random() < dt * 14) { const [x, y, z] = t.blast; this.fx.emit(x - 0.9, y + 0.6, z, 2.2 + Math.random(), -0.6, (Math.random() - 0.5) * 0.8, 0.07, Math.random() < 0.5 ? 0xf0cf98 : 0xffd38a, 0.6, 2, 0.8); }
+      const yard = nearTT && this.region === 'out'; ['ydrop', 'ypress', 'ypItem', 'boulder'].forEach((k) => this.tt[k] && (this.tt[k].visible = yard));
+      if (yard && this.tt.ydrop) { const k = cyc(8, 1), [x, , z] = t.yardDrop; this.tt.ydrop.position.set(x, 0.3 + dropY(k, 7.8, 0), z); this.tt.ydrop.rotation.y = k * 2; impact(k, this._ky || 0, x, 0.4, z); this._ky = k; }
+      if (yard && this.tt.ypress) { const k = cyc(7, 3), [x, z] = t.yardPress; const y = k < 0.45 ? 5.0 - k / 0.45 * 3.6 : k < 0.6 ? 1.4 : 1.4 + (k - 0.6) / 0.4 * 3.6; this.tt.ypress.position.set(x, y, z); this.tt.ypItem.scale.set(1, k > 0.43 && k < 0.62 ? 0.8 : 1, 1); }
+      if (yard && this.tt.boulder) { const k = cyc(9), [x, z] = t.ramp; const zz = k < 0.8 ? z + 6.6 - k / 0.8 * 6.0 : z + 0.6, yy = k < 0.8 ? 2.95 - k / 0.8 * 1.9 + 0.0 : 1.05 + Math.abs(Math.sin((k - 0.8) * 30)) * 0.3 * (1 - (k - 0.8) / 0.2); this.tt.boulder.position.set(x, yy, zz); this.tt.boulder.rotation.x = -k * 9; this.tt.boulder.scale.setScalar(k > 0.96 ? Math.max(0.01, (1 - k) / 0.04) : k < 0.04 ? Math.max(0.01, k / 0.04) : 1); if ((this._kb || 0) < 0.8 && k >= 0.8) { this.fx.burst(x, 1.6, z - 0.4, 0xffd23f, 12, 4); } this._kb = k; } }
     // dials + door
     this.dials.forEach((g, i) => { const want = -this.dialA[i] * PI / 2; g.rotation.x += (want - g.rotation.x) * Math.min(1, dt * 6); });
     if (this.door) { const want = S.flags.door ? -3.3 : 0; this.door.position.y += (want - this.door.position.y) * Math.min(1, dt * 1.5); }

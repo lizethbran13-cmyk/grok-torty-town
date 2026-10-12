@@ -1,4 +1,4 @@
-// Grok Pup Town - boot, app state, main loop.
+// Grok Torty Town - boot, app state, main loop.
 import { E, initEngine, render, trackFps } from './engine.js';
 import { initMats } from './mats.js';
 import { initInput, clearEdges, edge, IN } from './input.js';
@@ -21,7 +21,7 @@ async function boot() {
   { const pb = $('hPause'); let tT = 0; const hit = (e) => { e.preventDefault(); e.stopPropagation(); if (performance.now() - tT < 350) return; tT = performance.now(); sfx('click'); if (app.paused && app.state === 'play') app.resume(); else app.pause(); };
     pb.addEventListener('touchstart', hit, { passive: false }); pb.addEventListener('click', hit); }
   { const gb = $('hGoal'); gb.addEventListener('click', () => { if (app.state === 'play' && !app.busy) { app.paused = true; app.ui.journal(() => app.resume()); } }); }
-  await new Promise((r) => setTimeout(r, 30)); setLoad(45, 'Building Pup Town…');
+  await new Promise((r) => setTimeout(r, 30)); setLoad(45, 'Building Torty Town…');
   await new Promise((r) => setTimeout(r, 30));
   app.game = new Game(app, {}); setLoad(90, 'Baking the pupcakes…');
   try { E.renderer.compile(E.scene, E.camera); } catch (e) {}

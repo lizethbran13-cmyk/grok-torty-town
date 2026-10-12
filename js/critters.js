@@ -21,9 +21,9 @@ export function makeTortoise(o = {}) {
   const _n = new THREE.Vector3(), _q = new THREE.Quaternion(), _e = new THREE.Euler(), up = new THREE.Vector3(0, 1, 0);
   const scute = (th, ph, r, col) => { const sx = A * Math.sin(th) * Math.cos(ph), sy = B * Math.cos(th), sz = Cz * Math.sin(th) * Math.sin(ph);
     _n.set(sx / (A * A), sy / (B * B), sz / (Cz * Cz)).normalize(); _q.setFromUnitVectors(up, _n); _e.setFromQuaternion(_q, 'XYZ');
-    b.g.add(P.sphere, col, sx + _n.x * 0.02, Y0 + sy + _n.y * 0.02, sz + _n.z * 0.02, _e.x, _e.y, _e.z, r, 0.13, r * 1.05); return [sx + _n.x * 0.16, Y0 + sy + _n.y * 0.16, sz + _n.z * 0.16, _e]; };
+    b.g.add(P.sphereLo, col, sx + _n.x * 0.02, Y0 + sy + _n.y * 0.02, sz + _n.z * 0.02, _e.x, _e.y, _e.z, r, 0.13, r * 1.05); return [sx + _n.x * 0.16, Y0 + sy + _n.y * 0.16, sz + _n.z * 0.16, _e]; };
   const top = scute(0, 0, 0.78, scL); for (let i = 0; i < 6; i++) scute(0.66, i / 6 * PI * 2 + PI / 6, 0.74, i % 2 ? sc : scL); for (let i = 0; i < 12; i++) scute(1.17, i / 12 * PI * 2, 0.58, i % 2 ? scL : sc);
-  for (let i = 0; i < 18; i++) { const a = i / 18 * PI * 2; b.g.add(P.sphere, i % 2 ? sc : groove, Math.cos(a) * A * 0.99, Y0 + 0.08, Math.sin(a) * Cz * 0.99, 0, -a, 0, 0.42, 0.14, 0.3); }
+  for (let i = 0; i < 18; i++) { const a = i / 18 * PI * 2; b.g.add(P.sphereLo, i % 2 ? sc : groove, Math.cos(a) * A * 0.99, Y0 + 0.08, Math.sin(a) * Cz * 0.99, 0, -a, 0, 0.42, 0.14, 0.3); }
   b.m.add(P.sphere, belly, 0, Y0 - 0.02, 0, 0, 0, 0, A * 0.97, 0.16, Cz * 0.97); b.f.add(P.sphere, skin, 0, Y0 - 0.12, 0, 0, 0, 0, A * 0.85, 0.42, Cz * 0.85);
   b.f.add(P.capsule, skin, 0, 0.42, -Cz - 0.05, -PI / 2 - 0.5, 0, 0, 0.22, 0.45, 0.22);
   // racing number disc on the shell top / backpack / mail satchel

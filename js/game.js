@@ -64,7 +64,7 @@ export class Game {
     if (id === 'luna') return !S.rats.luna || (S.clues.chart && !S.flags.luna); if (id === 'pirat') return !S.rats.pirat || !S.flags.race; if (id === 'snowie') return !S.rats.snowie || (q >= 1 && !(S.sus.snowie | 0)) || !S.flags.snowie;
     if (id === 'rocky' || id === 'glimmer') return q >= 1 && !(S.sus[id] | 0); if (id === 'penny') return (S.sus.rocky | 0) === 1; if (id === 'coral') return (S.sus.glimmer | 0) === 1; if (id === 'taffy') return (S.sus.snowie | 0) === 1; if (id === 'fern') return !S.flags.farm; return false; }
   updateNPCs(dt) { const me = this.me, T = this.T;
-    for (const n of this.npcs) { const d2 = (me.x - n.x) ** 2 + (me.z - n.z) ** 2; const vis = !n.hidden && this.vis.has(n.region) && !(n.region === 'out' && this.region !== 'out' && d2 > 625) && !(n.region === 'out' && d2 > 110 * 110); n.rig.root.visible = vis; if (n.cart) n.cart.visible = vis; n.mark.visible = false; if (!vis && !n.d.walk) continue;
+    for (const n of this.npcs) { const d2 = (me.x - n.x) ** 2 + (me.z - n.z) ** 2; const vis = !n.hidden && this.vis.has(n.region) && !(n.region === 'out' && this.region !== 'out' && d2 > 625) && !(n.region === 'out' && d2 > 70 * 70); n.rig.root.visible = vis; if (n.cart) n.cart.visible = vis; n.mark.visible = false; if (!vis && !n.d.walk) continue;
       const near = Math.hypot(me.x - n.x, me.z - n.z) < (n.kind === 'tort' ? 3.2 : 4) && Math.abs(me.y - n.y) < 3; let sp = 0; const talking = this.chat && this.chat.npc === n;
       if (n.d.walk && !talking && !(near && !n.cart)) { const p = n.d.walk[n.wp]; const dx = p[0] - n.x, dz = p[1] - n.z, d = Math.hypot(dx, dz); const v = n.d.v || 0.8;
         if (d < 0.3) n.wp = (n.wp + 1) % n.d.walk.length; else { n.x += dx / d * v * dt; n.z += dz / d * v * dt; let t = Math.atan2(dx, dz) - n.yaw; while (t > PI) t -= PI * 2; while (t < -PI) t += PI * 2; n.yaw += t * Math.min(1, dt * 6); sp = v; }
@@ -85,7 +85,7 @@ export class Game {
   // ------------------------------------------------ dynamic bits
   buildDyn() { const w = this.world, s = w.spots;
     // Sun Shells (instanced, spinning golden scallop shells)
-    { const b = MB(); b.g.add(P.sphere, 0xffc928, 0, 0, 0, 0, 0, 0, 0.9, 0.9, 0.28); for (let i = 0; i < 7; i++) { const a = -PI / 2 + (i - 3) * 0.32; b.g.add(P.capsule, 0xffe066, Math.cos(a + PI) * 0.0 + Math.sin(a) * 0.4, -Math.cos(a) * 0.4 * -1 + 0.0, 0.2, 0, 0, a, 0.16, 0.85, 0.08); } b.g.add(P.rbox, 0xffc928, 0, -0.85, 0, 0, 0, 0, 0.5, 0.3, 0.2); const geo = toGroup(b).children[0].geometry;
+    { const SL = new THREE.SphereGeometry(1, 18, 10), CL = new THREE.CapsuleGeometry(0.5, 1, 3, 10); const b = MB(); b.g.add(SL, 0xffc928, 0, 0, 0, 0, 0, 0, 0.9, 0.9, 0.28); for (let i = 0; i < 7; i++) { const a = -PI / 2 + (i - 3) * 0.32; b.g.add(CL, 0xffe066, Math.cos(a + PI) * 0.0 + Math.sin(a) * 0.4, -Math.cos(a) * 0.4 * -1 + 0.0, 0.2, 0, 0, a, 0.16, 0.85, 0.08); } b.g.add(P.rbox, 0xffc928, 0, -0.85, 0, 0, 0, 0, 0.5, 0.3, 0.2); const geo = toGroup(b).children[0].geometry;
       this.shellIM = new THREE.InstancedMesh(geo, new THREE.MeshStandardMaterial({ color: 0xffd23f, metalness: 0.8, roughness: 0.25, emissive: 0x7a5200, emissiveIntensity: 0.5 }), w.gears.length); this.shellIM.castShadow = true; this.shellIM.frustumCulled = false; this.add(this.shellIM); }
     this.biscGot = new Set(S.gears); this._m = new THREE.Matrix4(); this._q = new THREE.Quaternion(); this._e = new THREE.Euler(); this._s = new THREE.Vector3(); this._p = new THREE.Vector3();
     // Candy's squeaky cactus toys
@@ -96,8 +96,8 @@ export class Game {
     // marigolds (Mama Rosa's beds)
     this.flowers = w.plants.map((p, i) => { const b = MB(); for (let k = 0; k < 3; k++) { const ox = (k - 1) * 0.6; b.g.add(P.cyl, 0x2e9e45, ox, 0.3, 0, 0, 0, 0, 0.03, 0.6, 0.03); for (let j = 0; j < 10; j++) { const a = j / 10 * PI * 2; b.g.add(P.sphere, 0xff9a1f, ox + Math.cos(a) * 0.12, 0.66 + Math.sin(a) * 0.12, 0, 0, 0, 0, 0.08, 0.08, 0.03); } b.g.add(P.sphere, 0xb45309, ox, 0.66, 0.02, 0, 0, 0, 0.07); }
       const g = toGroup(b); g.position.set(p[0], p[1], p[2]); g.scale.setScalar(S.plants.includes(i) ? 1 : 0.001); this.add(g); return g; });
-    // lettuce field (one InstancedMesh: hundreds of heads, a single draw call)
-    { const b = MB(); for (let i = 0; i < 7; i++) { const a = i * 2.4, r = i < 2 ? 0.05 : 0.2; b.g.add(P.sphere, i < 2 ? 0xb5e86a : i % 2 ? 0x4cbb3c : 0x6fd04f, Math.cos(a) * r, 0.2, Math.sin(a) * r, Math.cos(a) * 0.5, 0, Math.sin(a) * 0.5, 0.26, 0.2, 0.26); } const geo = toGroup(b).children[0].geometry; const F = s.field || [];
+    // lettuce field (one InstancedMesh: hundreds of heads, a single draw call, low-poly heads)
+    { const LO = new THREE.SphereGeometry(1, 10, 7); const b = MB(); for (let i = 0; i < 7; i++) { const a = i * 2.4, r = i < 2 ? 0.05 : 0.2; b.g.add(LO, i < 2 ? 0xb5e86a : i % 2 ? 0x4cbb3c : 0x6fd04f, Math.cos(a) * r, 0.2, Math.sin(a) * r, Math.cos(a) * 0.5, 0, Math.sin(a) * 0.5, 0.26, 0.2, 0.26); } const geo = toGroup(b).children[0].geometry; const F = s.field || [];
       this.field = new THREE.InstancedMesh(geo, new THREE.MeshPhysicalMaterial({ vertexColors: true, roughness: 0.4, clearcoat: 0.4 }), F.length); F.forEach((p, i) => { this._m.compose(this._p.set(p[0], p[1], p[2]), this._q.setFromEuler(this._e.set(0, i, 0)), this._s.setScalar(0.85 + p[3] * 0.12)); this.field.setMatrixAt(i, this._m); }); this.field.castShadow = true; this.field.userData.lod = [-100, 0.2, 95]; this.add(this.field); }
     // windmill blades
     if (s.mill) { const b = MB(); for (let i = 0; i < 6; i++) b.m.add(P.rbox, i % 2 ? 0xffffff : 0xef4444, Math.cos(i / 6 * PI * 2) * 1.5, Math.sin(i / 6 * PI * 2) * 1.5, 0, 0, 0, i / 6 * PI * 2, 2.6, 0.5, 0.05); b.x.add(P.sphere, 0xd4a017, 0, 0, 0.05, 0, 0, 0, 0.3); this.mill = this.add(toGroup(b)); this.mill.position.set(...s.mill); }
@@ -141,7 +141,7 @@ export class Game {
     for (const k in this.world.regionMeshes) { const on = v.has(k); for (const m of this.world.regionMeshes[k]) m.visible = on; } this._lod = 0; }
   farCull(dt) { this._lod -= dt; if (this._lod > 0) return; this._lod = 0.4; const c = E.camera.position, D2 = 95 * 95;
     for (const m of this.world.detailMeshes) { const reg = m.userData.region; if (!this.vis.has(reg)) { m.visible = false; continue; } const bs = m.geometry.boundingSphere; m.visible = !bs || (bs.center.x - c.x) ** 2 + (bs.center.z - c.z) ** 2 < D2 + bs.radius * bs.radius * 4; }
-    if (this.field) this.field.visible = !this.under && Math.hypot(c.x + 100, c.z - 94) < 120; }
+    if (this.field) this.field.visible = !this.under && Math.hypot(c.x + 100, c.z - 94) < 85; }
   areaLabel() { const r = REGIONS.find((q) => q.id === this.region); return r ? r.name : areaName(this.me.x, this.me.z); }
   // ------------------------------------------------ frame
   update(dt) { this.T += dt; const w = this.world, me = this.me;
@@ -170,7 +170,7 @@ export class Game {
     if (this.scene.fog) { this.scene.fog.color.copy(under ? c.a.set(0x1e1b3a) : c.a.set(0xf3dcc0).lerp(c.b.set(0xffb38a), ev)); this.scene.fog.density = under ? 0.02 : inside ? 0.001 : 0.0032; }
     for (const s of this.world.lights) if (s.out) { if (s.i0 == null) s.i0 = s.i; s.i = s.i0 * (0.15 + ev * 1.4); } }
   anim(dt) { const T = this.T, w = this.world, me = this.me, s = w.spots;
-    const G = w.gears; for (let i = 0; i < G.length; i++) { const p = G[i]; const got = this.biscGot.has(i); this._q.setFromEuler(this._e.set(0, T * 2 + i, 0)); this._p.set(p[0], p[1] + Math.sin(T * 2 + i) * 0.08, p[2]); this._s.setScalar(got ? 0 : 0.3); this._m.compose(this._p, this._q, this._s); this.shellIM.setMatrixAt(i, this._m); }
+    const G = w.gears; for (let i = 0; i < G.length; i++) { const p = G[i]; const got = this.biscGot.has(i) || (p[1] > UY + 10) !== !this.under || (p[0] - me.x) ** 2 + (p[2] - me.z) ** 2 > 6400; this._q.setFromEuler(this._e.set(0, T * 2 + i, 0)); this._p.set(p[0], p[1] + Math.sin(T * 2 + i) * 0.08, p[2]); this._s.setScalar(got ? 0 : 0.3); this._m.compose(this._p, this._q, this._s); this.shellIM.setMatrixAt(i, this._m); }
     this.shellIM.instanceMatrix.needsUpdate = true;
     this.toys.forEach((t) => { if (t.m.visible) { t.m.rotation.y = T * 2; t.m.position.y = t.p[1] + 0.3 + Math.sin(T * 3) * 0.08; } });
     if (this.sun.userData.carry) { this.sun.position.set(me.x, me.y + me.hgt + 0.5 + Math.sin(T * 4) * 0.05, me.z); if (Math.random() < dt * 6) this.fx.sparkle(me.x, me.y + me.hgt + 0.5, me.z, 0xffd23f); } if (this.sun.visible) { this.sun.rotation.y = T * 0.8; if (Math.random() < dt * 3) this.fx.sparkle(this.sun.position.x, this.sun.position.y, this.sun.position.z, 0xffd23f); }
@@ -179,7 +179,7 @@ export class Game {
     const out = !this.under && this.region === 'out';
     if (out) { this.birds.visible = true; for (let i = 0; i < this.birdD.length; i++) { const b = this.birdD[i], a = T * b.sp + b.ph; this._p.set(b.cx + Math.cos(a) * b.r, b.y + Math.sin(T * 0.7 + i) * 0.6, b.cz + Math.sin(a) * b.r); this._q.setFromEuler(this._e.set(0, -a, Math.sin(a) * 0.15));
         const f = 0.55 + Math.abs(Math.sin(T * 12 + i)) * 0.7; this._s.set(f * 1.4, 1.4, 1.4); this._m.compose(this._p, this._q, this._s); this.birds.setMatrixAt(i, this._m); } this.birds.instanceMatrix.needsUpdate = true; } else this.birds.visible = false;
-    this.swim.forEach((r, i) => { const a = T * 0.15 + i * 1.6, rr = 3 + (i % 2) * 2.2; r.root.visible = out; r.root.position.set(Math.cos(a) * rr * 1.25, -0.3, Math.sin(a) * rr * 0.85); r.root.rotation.y = -a; animTortoise(r, dt, 0.6, 'idle'); });
+    const nearSq = Math.hypot(me.x, me.z) < 60; this.swim.forEach((r, i) => { const a = T * 0.15 + i * 1.6, rr = 3 + (i % 2) * 2.2; r.root.visible = out && nearSq; if (!r.root.visible) return; r.root.position.set(Math.cos(a) * rr * 1.25, -0.3, Math.sin(a) * rr * 0.85); r.root.rotation.y = -a; animTortoise(r, dt, 0.6, 'idle'); });
     this.weeds.forEach((q) => { const x = 80 + ((T * 2.2 + q.o * 5) % 50); q.g.visible = !this.under; q.g.position.set(x, 0.55 + Math.abs(Math.sin(T * 3 + q.o)) * 0.4, q.z + Math.sin(T * 0.5 + q.o) * 3); q.g.rotation.z = -T * 3; });
     if (out && Math.random() < dt * 6) { const p = (s.pools || [])[(Math.random() * 4) | 0]; if (p) this.fx.emit(p[0] + (Math.random() - 0.5) * p[3], p[1] + 0.3, p[2] + (Math.random() - 0.5) * p[4], 0, 0.8, 0, 0.18, 0xffffff, 1.6, -0.4, 0.6); }
     if (this.region === 'spa' && Math.random() < dt * 8) { const p = s.spaPool; this.fx.emit(p[0] + (Math.random() - 0.5) * 6, p[1], p[2] + (Math.random() - 0.5) * 4, 0, 0.7, 0, 0.2, 0xffffff, 1.6, -0.4, 0.6); }
@@ -191,7 +191,7 @@ export class Game {
     // dials + door
     this.dials.forEach((g, i) => { const want = -this.dialA[i] * PI / 2; g.rotation.x += (want - g.rotation.x) * Math.min(1, dt * 6); });
     if (this.door) { const want = S.flags.door ? -3.3 : 0; this.door.position.y += (want - this.door.position.y) * Math.min(1, dt * 1.5); }
-    if (!this.race) this.placeRacers(dt); }
+    const nearT = !this.under && Math.hypot(me.x - TRACK.cx, me.z - TRACK.cz) < 75; this.racers.forEach((r) => r.root.visible = nearT); if (!this.race && nearT) this.placeRacers(dt); }
   // ------------------------------------------------ SLOW-MO DERBY (3D): 1 lap, cheer on the beat to boost Speedy (#3)
   offerRace() { if (this.race) return; this.race = { t: -3.5, A: [PI / 2 - 0.02, PI / 2 - 0.02, PI / 2 - 0.02, PI / 2 - 0.02], v: [0, 0, 0, 0], boost: 0, beat: 0, last: 4, combo: 0, done: false }; this.toastMsg('🏁 Slow-Mo Derby! Tap 📣 CHEER when the ring over Speedy #3 turns GREEN.'); sfx('check'); }
   updateRace(dt) { const R = this.race; if (!R) { this.cheerRing.visible = false; return; } R.t += dt; const end = PI / 2 + PI * 2;

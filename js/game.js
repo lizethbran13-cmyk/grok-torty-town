@@ -1,22 +1,22 @@
 // Grok Torty Town runtime: the town, players, townsfolk, the shuttle cart, ambient desert life, day -> sunset, collectibles,
 // the Sunstone mystery, the Slow-Mo Derby + Harvest Rush (3D mini-games), a hidden puzzle, co-op hooks.
 import * as THREE from 'three';
-import { E, setEnvironment, followShadow, skyUniforms } from './engine.js';
-import { World } from './world.js';
-import { buildTown, regionAt, areaName, REGIONS, DOORS, NEAR, STOPS, TRACK } from './town.js';
-import { UY } from './under.js';
-import { Player } from './player.js';
-import { FX } from './fx.js';
-import { makeRat, animRat, MB, toGroup } from './models.js';
-import { makePup, animPup, birdGeo } from './dogs.js';
-import { makeTortoise, animTortoise, makeRoadrunner, animRoadrunner, makeLizard, animLizard, makeSunstone } from './critters.js';
-import { P } from './geo.js';
-import { rcyl, capsule, torus, sph, cone, heart, star, blobGeo } from './shapes.js';
-import { updateFrustum, inView, LightPool } from './perf.js';
-import { sfx, playMusic } from './audio.js';
-import { S, persist } from './save.js';
-import { NPCS, talk, clueText, SUN_CLUES, HATS, BADGES, GLYPH } from './story.js';
-import { readMove, edge, held, IN } from './input.js';
+import { E, setEnvironment, followShadow, skyUniforms } from './engine.js?v=tt4';
+import { World } from './world.js?v=tt4';
+import { buildTown, regionAt, areaName, REGIONS, DOORS, NEAR, STOPS, TRACK } from './town.js?v=tt4';
+import { UY } from './under.js?v=tt4';
+import { Player } from './player.js?v=tt4';
+import { FX } from './fx.js?v=tt4';
+import { makeRat, animRat, MB, toGroup } from './models.js?v=tt4';
+import { makePup, animPup, birdGeo } from './dogs.js?v=tt4';
+import { makeTortoise, animTortoise, makeRoadrunner, animRoadrunner, makeLizard, animLizard, makeSunstone } from './critters.js?v=tt4';
+import { P } from './geo.js?v=tt4';
+import { rcyl, capsule, torus, sph, cone, heart, star, blobGeo } from './shapes.js?v=tt4';
+import { updateFrustum, inView, LightPool } from './perf.js?v=tt4';
+import { sfx, playMusic } from './audio.js?v=tt4';
+import { S, persist } from './save.js?v=tt4';
+import { NPCS, talk, clueText, SUN_CLUES, HATS, BADGES, GLYPH } from './story.js?v=tt4';
+import { readMove, edge, held, IN } from './input.js?v=tt4';
 const PI = Math.PI;
 const TOYS = [[60, 0, 76], [-70, 0, 61], [108, 0, -4]];
 const DAY = 420; // seconds per day -> sunset cycle
@@ -107,8 +107,8 @@ export class Game {
       const db = MB(); for (let k = 0; k < 5; k++) db.m.add(P.sphere, 0x3b2410, Math.cos(k) * 0.25, 0.03, Math.sin(k * 1.3) * 0.25, 0, 0, 0, 0.06, 0.03, 0.06); const seeds = toGroup(db); seeds.visible = false; g.add(sprout, head, seeds); sprout.visible = false; this.add(g);
       const o = { kind: 'plot', i, x: p[0], y: 0, z: p[2], r: 1.5, label: '' }; w.inter.push(o); return { g, sprout, head, seeds, st: 0, t: 0 }; });
     // the hidden dials (rotating stone drums) + the carved door slab
-    this.dials = (s.dials || []).map((p, i) => { const g = new THREE.Group(); g.position.set(...p); const b = MB(); b.m.add(P.cyl, 0xc97a44, 0, 0, 0, 0, 0, PI / 2, 0.55, 0.62, 0.55); const sy = [(bb) => { bb.l.add(P.sphere, 0xffb020, 0, 0, 0, 0, 0, 0, 0.18, 0.18, 0.06, 0.4); for (let k = 0; k < 8; k++) bb.l.add(P.cone, 0xffd23f, 0, Math.cos(k / 8 * PI * 2) * 0.3, Math.sin(k / 8 * PI * 2) * 0.3, k / 8 * PI * 2, 0, 0, 0.05, 0.12, 0.05, 0.3); }, (bb) => bb.l.add(torus(0.3, 20, PI * 1.3), 0xc4b5fd, 0, 0, 0, 0, PI / 2, 0.6, 0.25, 0.25, 0.25, 0.4), (bb) => bb.l.add(star(), 0xfde68a, 0, 0, 0, 0, PI / 2, 0, 0.25, 0.25, 0.1, 0.4), (bb) => { bb.l.add(P.sphere, 0x4ade80, 0, 0, 0, 0, 0, 0, 0.08, 0.2, 0.25, 0.3); bb.l.add(P.sphere, 0x4ade80, 0, 0.05, 0.28, 0, 0, 0, 0.06, 0.09, 0.09, 0.3); }];
-      for (let k = 0; k < 4; k++) { const sb = MB(); sy[k](sb); const m = toGroup(sb, false); const a = k / 4 * PI * 2; m.position.set(-0.32, Math.sin(a) * 0.0, 0); m.rotation.x = 0; const holder = new THREE.Group(); holder.rotation.x = a; m.position.set(0, 0, 0.0); const off = new THREE.Group(); off.position.set(-0.32 - 0.01, 0, 0); off.add(m); m.rotation.y = 0; holder.add(off); off.position.set(-0.33, 0, 0); m.position.set(0, 0.5 * 0, 0); g.add(holder); holder.children[0].position.set(-0.32, 0, 0); holder.children[0].children[0].position.set(0, 0, 0); holder.rotation.x = 0; holder.userData.k = k; }
+    this.dials = (s.dials || []).map((p, i) => { const g = new THREE.Group(); g.position.set(...p); const b = MB(); b.m.add(P.cyl, 0xc97a44, 0, 0, 0, 0, 0, PI / 2, 0.55, 0.62, 0.55); const sy = [(bb) => { bb.l.add(P.sphere, 0xffb020, 0, 0, 0, 0, 0, 0, 0.06, 0.18, 0.18, 0.4); for (let k = 0; k < 8; k++) bb.l.add(P.cone, 0xffd23f, 0, Math.cos(k / 8 * PI * 2) * 0.3, Math.sin(k / 8 * PI * 2) * 0.3, k / 8 * PI * 2, 0, 0, 0.05, 0.12, 0.05, 0.3); }, (bb) => bb.l.add(torus(0.3, 20, PI * 1.3), 0xc4b5fd, 0, 0, 0, 0, PI / 2, 0.6, 0.25, 0.25, 0.25, 0.4), (bb) => bb.l.add(star(), 0xfde68a, 0, 0, 0, 0, PI / 2, 0, 0.25, 0.25, 0.1, 0.4), (bb) => { bb.l.add(P.sphere, 0x4ade80, 0, 0, 0, 0, 0, 0, 0.08, 0.2, 0.25, 0.3); bb.l.add(P.sphere, 0x4ade80, 0, 0.05, 0.28, 0, 0, 0, 0.06, 0.09, 0.09, 0.3); }];
+      b.m.add(P.cyl, 0xfff1d6, -0.32, 0, 0, 0, 0, PI / 2, 0.47, 0.04, 0.47); for (let k = 0; k < 4; k++) { const sb = MB(); sy[k](sb); const m = toGroup(sb, false); m.position.set(-0.4, 0, 0); m.scale.setScalar(1.45); m.userData.k = k; g.add(m); }
       g.add(toGroup(b)); this.add(g); return g; });
     S.dials = Array.isArray(S.dials) ? S.dials : [0, 0, 0]; this.dialA = S.dials.map((v) => v);
     if (s.sdoor) { const b = MB(); b.m.add(P.rbox, 0xb86a3a, 0, 1.6, 0, 0, 0, 0, 0.35, 3.2, 2.6); for (let k = 0; k < 3; k++) b.m.add(P.sphere, 0xd9925a, -0.18, 1.0 + k * 0.8, 0, 0, 0, 0, 0.05, 0.25, 0.6); this.door = this.add(toGroup(b)); this.door.position.set(s.sdoor[0] - 0.25, S.flags.door ? -3.3 : 0, s.sdoor[1]);
@@ -211,7 +211,7 @@ export class Game {
       if (yard && this.tt.ypress) { const k = cyc(7, 3), [x, z] = t.yardPress; const y = k < 0.45 ? 5.0 - k / 0.45 * 3.6 : k < 0.6 ? 1.4 : 1.4 + (k - 0.6) / 0.4 * 3.6; this.tt.ypress.position.set(x, y, z); this.tt.ypItem.scale.set(1, k > 0.43 && k < 0.62 ? 0.8 : 1, 1); }
       if (yard && this.tt.boulder) { const k = cyc(9), [x, z] = t.ramp; const zz = k < 0.8 ? z + 6.6 - k / 0.8 * 6.0 : z + 0.6, yy = k < 0.8 ? 2.95 - k / 0.8 * 1.9 + 0.0 : 1.05 + Math.abs(Math.sin((k - 0.8) * 30)) * 0.3 * (1 - (k - 0.8) / 0.2); this.tt.boulder.position.set(x, yy, zz); this.tt.boulder.rotation.x = -k * 9; this.tt.boulder.scale.setScalar(k > 0.96 ? Math.max(0.01, (1 - k) / 0.04) : k < 0.04 ? Math.max(0.01, k / 0.04) : 1); if ((this._kb || 0) < 0.8 && k >= 0.8) { this.fx.burst(x, 1.6, z - 0.4, 0xffd23f, 12, 4); } this._kb = k; } }
     // dials + door
-    this.dials.forEach((g, i) => { const want = -this.dialA[i] * PI / 2; g.rotation.x += (want - g.rotation.x) * Math.min(1, dt * 6); });
+    this.dials.forEach((g, i) => { const a = this.dialA[i]; g.children.forEach((m) => { if (m.userData.k !== undefined) m.visible = m.userData.k === a; }); if (g.userData.a !== a) { g.userData.a = a; g.userData.pop = 1; } g.userData.pop = Math.max(0, (g.userData.pop || 0) - dt * 3); g.rotation.x = Math.sin(g.userData.pop * PI) * 0.6; });
     if (this.door) { const want = S.flags.door ? -3.3 : 0; this.door.position.y += (want - this.door.position.y) * Math.min(1, dt * 1.5); }
     const nearT = !this.under && Math.hypot(me.x - TRACK.cx, me.z - TRACK.cz) < 75; this.racers.forEach((r) => r.root.visible = nearT); if (!this.race && nearT) this.placeRacers(dt); }
   // ------------------------------------------------ SLOW-MO DERBY (3D): 1 lap, cheer on the beat to boost Speedy (#3)
@@ -252,7 +252,7 @@ export class Game {
     for (const o of this.world.inter) { const d = Math.hypot(me.x - o.x, me.z - o.z); if (d < o.r && Math.abs(me.y - o.y) < 2 && d < bd) { bd = d; best = o; } }
     if (best && best.kind === 'plant' && S.plants.includes(best.i)) best = null;
     if (best && best.kind === 'plot') { const p = this.plots[best.i]; best = Object.assign({}, best, { label: !this.rush ? '🥬 Lettuce plot (ask Farmer Fern)' : ['🌱 Plant a seed', '💧 Water it', '⏳ Growing…', '🥬 PICK IT!'][p.st] }); }
-    if (best && best.kind === 'dial') best = Object.assign({}, best, { label: `🪨 Turn the dial (${GLYPH.syms[this.dialA[best.i]]})` });
+    if (best && best.kind === 'dial') best = Object.assign({}, best, { label: `🪨 Turn dial ${best.i + 1} (now ${GLYPH.syms[this.dialA[best.i]]})` });
     if (S.flags.door && this.world.spots.sdoor && !this.under) { const [dx, dz] = this.world.spots.sdoor; const d = Math.hypot(me.x - (dx - 1.2), me.z - dz); if (d < 1.8 && d < bd) { bd = d; best = { kind: 'descend', label: '🕳️ Step through the old door' }; } }
     if (best && best.kind === 'moonstone' && S.flags.moon) best = Object.assign({}, best, { label: '🌙 The Moonstone hums softly' });
     for (const n of this.npcs) { if (!n.rig.root.visible || n.override) continue; const r = n.kind === 'tort' ? 2.6 : n.kind === 'bird' ? 2.4 : 2.3; const d = Math.hypot(me.x - n.x, me.z - n.z); if (d < r && Math.abs(me.y - n.y) < 2.2 && d - 0.2 < bd) { bd = d; best = { kind: 'npc', npc: n, label: '💬 Talk to ' + n.d.n.split(' (')[0] }; } }
@@ -283,7 +283,9 @@ export class Game {
     if (IN.camDX || IN.camDY) { c.yaw -= IN.camDX * 0.0085 * sens * (S.opts.invertX ? -1 : 1); c.pitch = Math.max(-0.1, Math.min(1.15, c.pitch + IN.camDY * 0.005 * sens)); IN.camDX = IN.camDY = 0; }
     const manual = performance.now() - IN.lastCam < 1500;
     if (!manual && me.speed > 1) { let d = me.yaw - c.yaw; while (d > PI) d -= PI * 2; while (d < -PI) d += PI * 2; if (Math.abs(d) < 2.2) c.yaw += d * Math.min(1, dt * 0.9 * (me.speed / 7)); }
-    const indoor = this.region !== 'out'; const want = this.chat ? (this.chat.npc && (this.chat.npc.kind === 'tort' || this.chat.npc.kind === 'lizard') ? 4.6 : 5.6) + (this.chat.npc ? Math.max(0, Math.hypot(me.x - this.chat.npc.x, me.z - this.chat.npc.z) - 2.2) * 1.6 : 0) : indoor ? (this.under ? 7.4 : 6.6) : 10.8; c.dist += (want - c.dist) * Math.min(1, dt * 2);
+    const indoor = this.region !== 'out'; const want = this.chat ? (this.chat.npc && (this.chat.npc.kind === 'tort' || this.chat.npc.kind === 'lizard') ? 4.6 : 5.6) + (this.chat.npc ? Math.max(0, Math.hypot(me.x - this.chat.npc.x, me.z - this.chat.npc.z) - 2.2) * 1.6 : 0) : indoor ? (this.under ? 7.4 : 6.6) : 10.8; const sd = this.world.spots.sdoor, nearDial = !indoor && !this.chat && sd && Math.hypot(me.x - (sd[0] - 2.6), me.z - sd[1]) < 4.2;
+    if (nearDial) { if (!S.flags.dialTip) { S.flags.dialTip = 1; persist(); this.toastMsg('🪨 Tap each dial to change its symbol, match the old legend'); } if (!manual) { let dy = PI / 2 + 0.38 - c.yaw; while (dy > PI) dy -= PI * 2; while (dy < -PI) dy += PI * 2; c.yaw += dy * Math.min(1, dt * 3); c.pitch += (0.36 - c.pitch) * Math.min(1, dt * 3); } }
+    c.dist += ((nearDial ? 5.4 : want) - c.dist) * Math.min(1, dt * 2);
     const cn = this.chat && this.chat.npc; let tx = me.x, tz = me.z, ty = me.y + me.hgt * 0.8;
     if (cn) { const a = Math.atan2(me.x - cn.x, me.z - cn.z); let dy = a + 1.15 + PI - c.yaw; while (dy > PI) dy -= PI * 2; while (dy < -PI) dy += PI * 2; c.yaw += dy * Math.min(1, dt * 3); c.pitch += (0.32 - c.pitch) * Math.min(1, dt * 3); tx = me.x * 0.45 + cn.x * 0.55; tz = me.z * 0.45 + cn.z * 0.55; ty = Math.max(ty - 0.35, cn.y + (cn.markY || 1.2) * 0.7); }
     const k6 = c.snap ? 1 : 1 - Math.exp(-dt * 6); c.tgt.set(c.tgt.x + (tx - c.tgt.x) * (cn || c.chatT > 0 ? k6 : 1), c.snap ? ty : c.tgt.y + (ty - c.tgt.y) * (1 - Math.exp(-dt * (me.onGround ? 6 : 3))), c.tgt.z + (tz - c.tgt.z) * (cn || c.chatT > 0 ? k6 : 1)); c.chatT = cn ? 0.8 : Math.max(0, (c.chatT || 0) - dt);

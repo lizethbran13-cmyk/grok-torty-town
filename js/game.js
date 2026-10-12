@@ -23,7 +23,7 @@ const DAY = 420; // seconds per day -> sunset cycle
 export class Game {
   constructor(app, opts = {}) {
     this.app = app; this.scene = E.scene; this.net = app.net; this.hud = app.hud; this.T = 0; this.levelId = 'tortytown';
-    const w = this.world = new World(); w.game = this; buildTown(w); w.finalize(this.scene);
+    const w = this.world = new World(); w.game = this; { const R = E.renderer, rt = new THREE.WebGLRenderTarget(4, 4), sc = new THREE.Scene(); w.uploader = (m) => { const fc = m.frustumCulled; m.frustumCulled = false; const par = m.parent; sc.add(m); const prev = R.getRenderTarget(), sm = R.shadowMap.autoUpdate; R.shadowMap.autoUpdate = false; R.setRenderTarget(rt); R.render(sc, E.camera); R.setRenderTarget(prev); R.shadowMap.autoUpdate = sm; sc.remove(m); if (par) par.add(m); m.frustumCulled = fc; }; w._upRT = rt; } buildTown(w); w.finalize(this.scene); w.uploader = null; w._upRT.dispose();
     setEnvironment(w.env); this.fx = new FX(this.scene); this.extra = []; this.lightPool = new LightPool(this.scene, w.lights, 4);
     this.players = new Map();
     this.me = new Player({ rat: 'human', look: S.look, outfit: S.outfit, name: S.name || 'You', local: true, gadgets: new Set(), pid: opts.pid || 'me' });

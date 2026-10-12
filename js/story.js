@@ -8,7 +8,7 @@ export const HATS = [
   { id: 'detective', n: 'Detective Hat', how: 'Solve the Sunstone mystery' }, { id: 'wizard', n: 'Wizard Hat', how: 'Find 5 secrets' }, { id: 'shellcrown', n: 'Ancient Shell Crown', how: '???' }, { id: 'hardhat', n: 'Tortuga Tech Hard Hat', how: 'Become a Tortuga Tech intern' }, { id: 'crown', n: 'Gold Crown', how: 'Every Sun Shell + the mystery' },
 ];
 export const BADGES = { sun: '☀️ Sunstone Detective', toys: "🧸 Candy's Best Friend", garden: '🌼 Green Thumb', race: '🏁 Derby Champ', farm: '🥬 Lettuce Legend', polish: '✨ Shell Shiner', catch: '🍐 Pear Catcher', bubbles: '🫧 Bubble Popper',
-  express: '🐦 Express Rider', secrets: '🗝️ Secret Seeker', shells: '🐚 Sun Shell Collector', friends: '🐀 Visitor Welcome Crew', family: "🐢 Torty's Family Friend", ancient: '🌙 Keeper of the Moonstone', tough: '🛡️ Make-It-Tougher Pro', intern: '🏢 Tortuga Tech Intern' };
+  express: '🐦 Express Rider', secrets: '🗝️ Secret Seeker', shells: '🐚 Sun Shell Collector', friends: '🐀 Visitor Welcome Crew', family: "🐢 Torty's Family Friend", ancient: '🌙 Keeper of the Moonstone', tough: '🛡️ Make-It-Tougher Pro', grotto: '🍄 Grotto Explorer', intern: '🏢 Tortuga Tech Intern' };
 // look: { t: tortoise opts + s: scale } | { bird } | { liz } | { rat } | { dog }
 const N = (id, n, look, at, region, o = {}) => Object.assign({ id, n, look, at, region }, o);
 const ring = (cx, cz, r, n = 10, rz = r, a0 = 0) => Array.from({ length: n }, (_, i) => { const a = a0 + i / n * PI * 2; return [cx + Math.cos(a) * r, cz + Math.sin(a) * rz]; });

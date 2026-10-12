@@ -38,9 +38,10 @@ export const REGIONS = [
   // the hidden place (below the world, reached by a secret)
   { id: 'u_tunnel', x0: 150, x1: 176, z0: -6, z1: 6, y0: -34, y1: -24, ceil: -26.0, name: '🕳️ Ancient Tunnels', under: true },
   { id: 'u_crystal', x0: 176, x1: 204, z0: -16, z1: 16, y0: -34, y1: -20, ceil: -22.5, name: '💎 Crystal Cavern', under: true },
+  { id: 'u_grotto', x0: 178, x1: 206, z0: 16, z1: 42, y0: -34, y1: -20, ceil: -21.5, name: '🍄 Glowshroom Grotto', under: true },
   { id: 'u_hall', x0: 204, x1: 232, z0: -14, z1: 14, y0: -34, y1: -20, ceil: -23.0, name: '🐢 Hall of the Ancestors', under: true },
 ];
-export const NEAR = { u_tunnel: ['u_crystal'], u_crystal: ['u_tunnel', 'u_hall'], u_hall: ['u_crystal'] };
+export const NEAR = { u_tunnel: ['u_crystal'], u_crystal: ['u_tunnel', 'u_hall', 'u_grotto'], u_hall: ['u_crystal'], u_grotto: ['u_crystal'] };
 export const AREAS = [
   { x0: -128, x1: -60, z0: -128, z1: -40, name: '🏺 Old Adobe Quarter' }, { x0: 46, x1: 80, z0: 32, z1: 62, name: '🎉 Fiesta Plaza' },
   { x0: -34, x1: 34, z0: -38, z1: 36, name: '🌴 Oasis Square' }, { x0: 30, x1: 120, z0: -32, z1: 32, name: '🛍️ Market Street' },
@@ -53,7 +54,7 @@ export function areaName(x, z) { for (const a of AREAS) if (x >= a.x0 && x <= a.
 export const DOORS = { bakery: [-108, -74], music: [-82, -74], toys: [-106, -102], cinema: [57, 44], icecream: [73.5, 44], tortuga: [78, -42], hall: [0, -42], library: [-37, -42], cafe: [37, -42], post: [-38, 40], inn: [37, 40], market: [62, -10], shellshop: [87, -10], pottery: [106, -10], sweets: [57, 10], fossil: [82, 10],
   burrow: [-59, -10], shelby: [-86, -10], school: [-60, 10], spa: [-23, -94], obs: [22, -98], club: [-12, 82], barn: [-86, 52], green: [-73, 70] };
 // Roadrunner Express stops (fast travel) [x, z, yaw, name]
-export const STOPS = [[6, 30, PI, '🌴 Oasis Square'], [114, 8, -PI / 2, '🛍️ Market Street'], [-112, 8, PI / 2, '🏡 The Burrows'], [6, -84, PI, '♨️ Hot Spring Hill'], [6, 66, 0, '🏁 Racetrack'], [-78, 38, PI / 2, '🥬 Lettuce Farm'], [100, 62, -PI / 2, '🏜️ Dunes & Canyon'], [84, -36, PI, '🐢 Tortuga Tech'], [-94, -72, PI, '🏺 Old Adobe Quarter'], [62, 30, PI, '🎉 Fiesta Plaza']];
+export const STOPS = [[6, 30, PI, '🌴 Oasis Square'], [114, 8, -PI / 2, '🛍️ Market Street'], [-112, 8, PI / 2, '🏡 The Burrows'], [6, -84, PI, '♨️ Hot Spring Hill'], [6, 66, 0, '🏁 Racetrack'], [-78, 38, PI / 2, '🥬 Lettuce Farm'], [100, 62, -PI / 2, '🏜️ Dunes & Canyon'], [84, -36, PI, '🐢 Tortuga Tech'], [-94, -72, PI, '🏺 Old Adobe Quarter'], [68, 30.5, PI, '🎉 Fiesta Plaza']];
 // ------------------------------------------------------------------------------------------------ shared helpers
 export const shade = (c, k) => { const C = new THREE.Color(c); C.multiplyScalar(k); return C.getHex(); };
 const prismCache = new Map();

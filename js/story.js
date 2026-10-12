@@ -34,6 +34,15 @@ export const NPCS = [
   N('pip', 'Pip', { t: { shell: 'sky', hat: 'cap', hatC: 0xef4444 }, s: 0.16 }, [22, 13], 'out', { run: [22, 13.2, 3.2], phase: 0 }),
   N('squeak', 'Squeak', { t: { shell: 'rose', bow: 0xff5d8f }, s: 0.15 }, [22, 13], 'out', { run: [22, 13.2, 3.2], phase: PI }),
   N('zip', 'Zip (Roadrunner Express)', { bird: { cap: true }, s: 0.6 }, [8.8, 29.2, -PI * 0.75], 'out'),
+  N('picA', 'Daisy (picnicking)', { t: { shell: 'rose', hat: 'straw', bandC: 0xff5d8f, flower: 0xffffff }, s: 0.27 }, [-8.9, 14.6, 2.4], 'out', { mode: 'chat' }),
+  N('picB', 'Doug (picnicking)', { t: { shell: 'olive', hat: 'cap', hatC: 0xffb020 }, s: 0.28 }, [-6.4, 12.4, -0.9], 'out', { mode: 'chat' }),
+  N('picC', 'Tamsin (sipping lemonade)', { t: { shell: 'sky', glasses: 0xff5d8f, flower: 0xffd23f }, s: 0.27 }, [6.4, -14.6, -0.6], 'out', { mode: 'chat' }),
+  N('picD', 'Rocco the Gecko', { liz: { col: 0xa66bff, spots: 0xffd23f, glasses: true }, s: 1.0 }, [9.0, -12.3, 2.6], 'out', { y: 0.5 }),
+  N('fisher', 'Old Murphy (fishing)', { t: { shell: 'grey', hat: 'straw', bandC: 0x2563eb, beard: true }, s: 0.28 }, [-1.0, 5.2, PI], 'out', { y: 0.16 }),
+  N('lemon', 'Lulu (Cactus Lemonade)', { t: { shell: 'gold', hat: 'visor', hatC: 0xff5d8f, neck: 'apron', neckC: 0xffd23f }, s: 0.28 }, [11.0, -14.3, 0.9], 'out'),
+  N('painter', 'Picasso the Chuckwalla', { liz: { col: 0xd97706, spots: 0x7c2d12, hat: 'beret' }, s: 1.1 }, [-12.6, -10.4, PI], 'out'),
+  N('stroll1', 'Mo & Flo (strolling)', { t: { shell: 'plum', bow: 0xffd23f }, s: 0.27 }, [11, 0], 'out', { walk: [[11.5, 0], [8, 9], [0, 11.3], [-8, 9], [-11.5, 0], [-8, -9], [0, -11.3], [8, -9]], v: 0.5 }),
+  N('stroll2', 'Flo (strolling)', { t: { shell: 'coral', hat: 'straw', bandC: 0xa66bff }, s: 0.26 }, [0, -11.3], 'out', { walk: [[0, -11.3], [8, -9], [11.5, 0], [8, 9], [0, 11.3], [-8, 9], [-11.5, 0], [-8, -9]], v: 0.5 }),
   N('pablo', 'Pablo (Fruit Stall)', { t: { shell: 'sand', hat: 'sombrero', hatC: 0xf2cf7a, bandC: 0xff5d8f }, s: 0.3 }, [46, -6.2, 0], 'out'),
   N('nana', 'Nana Petunia (Flowers)', { t: { shell: 'rose', hat: 'flowercrown' }, s: 0.27 }, [68, 6.2, PI], 'out'),
   N('marge', 'Marge (out shopping)', { t: { shell: 'olive', hat: 'straw', bandC: 0x14b8a6, pack: 0x14b8a6 }, s: 0.28 }, [40, 3, PI / 2], 'out', { walk: [[40, 3], [110, 3], [110, -3], [40, -3]], v: 0.7 }),
@@ -130,6 +139,9 @@ export function talk(id, G) { const n = (S.talks[id] = (S.talks[id] | 0) + 1); p
     case 'penny': return confirm('rocky') ? { lines: L('Rocky? He was here at dawn sorting mail with me, then zoomed off on his route. Couldn\'t have done it!'), fx: () => G.toastMsg('✅ Rocky\'s alibi checks out!') } : { lines: L(cyc(['Welcome to the Roadrunner Post Office. Mail arrives fast, by tortoise standards.', 'Rocky delivers. We sort. Slowly.'])) };
     case 'coral': return confirm('glimmer') ? { lines: L('Glimmer? Polishing shells with me since sunrise. My best helper!'), fx: () => G.toastMsg('✅ Glimmer\'s alibi checks out!') } : { lines: L(cyc(['Welcome to the Shell Shop! Polishes, cozies, stickers. Try the polishing station!', 'A shiny shell is a happy shell.'])) };
     case 'taffy': return confirm('snowie') ? { lines: L('The little white rat? She bought a whole bag of lemon drops this morning. Golden, glowy and sour!'), fx: () => G.toastMsg('✅ Snowie\'s alibi checks out!') } : { lines: L(cyc(['Prickly pear lollipops! Cactus candy! Lemon drops!', 'Everything here is handmade. It took years.'])) };
+    case 'fisher': return { lines: L(cyc(['Shhh. The fish in this pond are very relaxed. So am I.', 'Caught nothing in 40 years. Best hobby ever.'])) };
+    case 'lemon': return { lines: L(cyc(['Cactus lemonade! Sweet, sour and only a LITTLE prickly.', 'Snowie bought three cups. And a bag of lemon drops. That rat loves lemon.'])) };
+    case 'painter': return { lines: L(cyc(['I\'m painting the pond. It\'s my 200th pond painting. It never moves, that\'s why I like it.', 'Have you seen the Sunstone at sunset? THAT\'s a colour.'])) };
     case 'zip': return { lines: L(['Zip', 'Meep! Roadrunner Express! Step up to any stop sign and pick where you want to go. Fastest ride in town!']) };
     case 'sam': return { lines: L(cyc(['Hop on the shuttle? I\'m already on my way… I\'ll be back around in about an hour.', 'Shuttle Sam, at your service. Next stop: also this stop, eventually.'])) };
     case 'fern': return { lines: L(cyc(['Howdy! Want to try Harvest Rush? Plant, water and pick as many lettuces as you can in 60 seconds!', 'Harvest 8 and I\'ll give you my spare chef hat.']), ), fx: () => G.offerFarm() };

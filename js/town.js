@@ -167,22 +167,24 @@ export function sunShell(w, x, y, z) { w.gears.push([x, y, z]); }
 function ground(w) {
   const gg = new THREE.PlaneGeometry(264, 264, 110, 110).rotateX(-PI / 2); { const P2 = gg.attributes.position; for (let i = 0; i < P2.count; i++) { const ex = P2.getX(i) / 11.2, ez = P2.getZ(i) / 8.4; if (ex * ex + ez * ez < 1) P2.setY(i, -0.8); } gg.computeVertexNormals(); } const cA = new THREE.Color(), cB = new THREE.Color();
   w.addFn('m', gg, (c, x, y, z) => { const n = Math.sin(x * 0.19) * Math.cos(z * 0.15) + Math.sin(x * 0.06 + z * 0.09) * 0.8; c.setHex(0xf0cf98).lerp(cA.set(n > 0.4 ? 0xf6dcae : n < -0.6 ? 0xe2b57c : 0xecc48c), 0.7);
-    const ro = Math.hypot(x, z); if (ro < 33.5) c.setHex(0xc9a578); else if (ro < 42) c.lerp(cB.set(0x8fd27a), Math.max(0, Math.min(1, (42 - ro) / 6)) * 0.8);
+    const ro = Math.hypot(x, z); if (ro < 33.5) c.setHex(0x9a5a34); else if (ro < 42) c.lerp(cB.set(0x8fd27a), Math.max(0, Math.min(1, (42 - ro) / 6)) * 0.8);
     if (x < -42 && z > 36) c.lerp(cB.set(0xa8784c), 0.55); if (z < -70) c.lerp(cB.set(0xe9a982), 0.4); if (x > 80 && z > 30) c.lerp(cB.set(0xf7d9a2), 0.5); }, 0, -0.02, 0);
   w.solid(-132, -3, -132, 132, 0, 132, { floor: true });
   const pave = (a, b, c, d) => floor(w, a, b, c, d, 'tile', 0.0, 0xe8cfa6, 0xd9b98a, 1.4);
   pave(30, -6, 122, 6); pave(-122, -6, -30, 6); pave(-4, -42, 4, -30); pave(12, -94, 18, -34); pave(-30, -94, 30, -88); pave(-4, 30, 4, 74); pave(-82, 6, -76, 40); pave(98, 6, 104, 62);
   pave(-40, -42, -34, -30); pave(34, -42, 40, -30); pave(-41, 30, -35, 40); pave(34, 30, 40, 40); pave(-12, 80, -4, 84);
   // plaza mosaic disc (radial sun tiles)
-  { const pos = [], col = [], cc = new THREE.Color(); // sun-ray mosaic: real individual tiles with grout gaps (flat colours per tile), a hole for the pond
+  { const pos = [], H = 0.07; // sun-ray mosaic: real raised 3D tiles (top + bevelled sides) with warm grout between, a hole for the pond
     for (let ring = 0; ring < 15; ring++) { const r0 = ring * 2.2, r1 = Math.min(33, r0 + 2.2), n = 16 + ring * 4; for (let k = 0; k < n; k++) { const a0 = k / n * PI * 2, a1 = (k + 1) / n * PI * 2, am = (a0 + a1) / 2, rm = (r0 + r1) / 2; const cx = Math.cos(am) * rm, cz = Math.sin(am) * rm; if ((cx / 10.6) ** 2 + (cz / 8.1) ** 2 < 1) continue;
-      cc.setHex(r1 > 32 ? 0xc98a4a : ring % 3 === 0 ? (k % 2 ? 0xf2d2a0 : 0xe8b878) : ring % 3 === 1 ? 0xf6e2bc : (k % 4 === 0 ? 0x2dd4bf : 0xf0d6a8));
-      const g = 0.07, ri = r0 + g, ro = r1 - g, b0 = a0 + g / Math.max(1, rm), b1 = a1 - g / Math.max(1, rm); const segs = Math.max(1, Math.ceil((b1 - b0) * ro / 1.2));
-      for (let s2 = 0; s2 < segs; s2++) { const c0 = b0 + (b1 - b0) * s2 / segs, c1 = b0 + (b1 - b0) * (s2 + 1) / segs; const q = [[Math.cos(c0) * ri, Math.sin(c0) * ri], [Math.cos(c1) * ri, Math.sin(c1) * ri], [Math.cos(c1) * ro, Math.sin(c1) * ro], [Math.cos(c0) * ro, Math.sin(c0) * ro]];
-        for (const t of [0, 1, 2, 0, 2, 3]) { pos.push(q[t][0], 0, q[t][1]); col.push(cc.r, cc.g, cc.b); } } } }
-    const dg = new THREE.BufferGeometry(); dg.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); dg.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); dg.computeVertexNormals();
-    const tc = (ring, k) => (ring * 2.2 + 2.2 > 32 ? 0xc98a4a : ring % 3 === 0 ? (k % 2 ? 0xf2d2a0 : 0xe8b878) : ring % 3 === 1 ? 0xf6e2bc : (k % 4 === 0 ? 0x2dd4bf : 0xf0d6a8));
-    w.addFn('g', dg, (c, x, y, z) => { const ring = Math.min(14, Math.floor(Math.hypot(x, z) / 2.2)), n = 16 + ring * 4, k = Math.floor(((Math.atan2(z, x) + PI * 2) % (PI * 2)) / (PI * 2 / n)); c.setHex(tc(ring, k)); }, 0, 0.012, 0); }
+      const g = 0.09, ri = r0 + g, ro = r1 - g, b0 = a0 + g / Math.max(1, rm), b1 = a1 - g / Math.max(1, rm); const segs = Math.max(1, Math.ceil((b1 - b0) * ro / 1.2));
+      const P2 = (a, r, y) => [Math.cos(a) * r, y, Math.sin(a) * r], quad = (A, B, C, D) => pos.push(...A, ...C, ...B, ...A, ...D, ...C), bv = 0.05;
+      for (let s2 = 0; s2 < segs; s2++) { const c0 = b0 + (b1 - b0) * s2 / segs, c1 = b0 + (b1 - b0) * (s2 + 1) / segs, e0 = s2 === 0 ? bv / rm : 0, e1 = s2 === segs - 1 ? bv / rm : 0;
+        quad(P2(c0 + e0, ri + bv, H), P2(c0 + e0, ro - bv, H), P2(c1 - e1, ro - bv, H), P2(c1 - e1, ri + bv, H));
+        quad(P2(c0, ro, 0), P2(c1, ro, 0), P2(c1 - e1, ro - bv, H), P2(c0 + e0, ro - bv, H)); quad(P2(c1, ri, 0), P2(c0, ri, 0), P2(c0 + e0, ri + bv, H), P2(c1 - e1, ri + bv, H));
+        if (s2 === 0) quad(P2(c0, ri, 0), P2(c0, ro, 0), P2(c0 + e0, ro - bv, H), P2(c0 + e0, ri + bv, H)); if (s2 === segs - 1) quad(P2(c1, ro, 0), P2(c1, ri, 0), P2(c1 - e1, ri + bv, H), P2(c1 - e1, ro - bv, H)); } } }
+    const dg = new THREE.BufferGeometry(); dg.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); dg.computeVertexNormals();
+    const tc = (ring, k) => { if (ring >= 14) return k % 2 ? 0xb8612f : 0xc97a3e; const m = ring % 4; if (m === 0) return k % 2 ? 0xd9773f : 0xe9a04f; if (m === 1) return (k % 5 === 0) ? 0x16a69a : 0xf0c27a; if (m === 2) return k % 3 === 0 ? 0xff7a50 : k % 3 === 1 ? 0xf6d08a : 0xe8a85a; return k % 4 === 0 ? 0x1fb5a8 : k % 4 === 2 ? 0xffb020 : 0xf3d6a0; };
+    w.addFn('g', dg, (c, x, y, z) => { const r = Math.hypot(x, z), ring = Math.min(14, Math.floor(r / 2.2)), n = 16 + ring * 4, k = Math.floor(((Math.atan2(z, x) + PI * 2) % (PI * 2)) / (PI * 2 / n)); c.setHex(tc(ring, k)); if (y < 0.03) c.multiplyScalar(0.82); }, 0, 0.0, 0); }
   w.add('m', torus(0.012, 96), 0xc98a4a, 0, 0.02, 0, PI / 2, 0, 0, 33, 33, 12);
 }
 // ------------------------------------------------------------------------------------------------ OASIS SQUARE
@@ -219,6 +221,20 @@ function square(w) { const S = w.spots;
   w.add('m', new THREE.RingGeometry(33.4, 36.4, 128).rotateX(-PI / 2), 0xd9b27a, 0, 0.008, 0); S.cart = { r: 34.9 };
   // café terrace (outside the Lettuce Leaf Café)
   [[31, -38], [36, -36], [42, -38]].forEach(([x, z], i) => { K.tableR(w, x, z, 0.7, 0.8, 0xffffff); for (let k = 0; k < 3; k++) { const a = k * 2.1; K.stool(w, x + Math.cos(a) * 1.1, z + Math.sin(a) * 1.1, SUN[(i + k) % 8]); } w.add('x', cyl(8), 0xd1d5db, x, 0.8, z, 0, 0, 0, 0.04, 2.0, 0.04); for (let k = 0; k < 8; k++) w.add('f', cone(3), k % 2 ? 0x4ade80 : 0xffffff, x, 2.55, z, 0, k / 8 * PI * 2, 0, 1.6, 0.6, 0.6); });
+  // pond-side life: picnic umbrellas, a little fishing pier, lemonade cart, painter's easel, pots of blooms
+  [[-7.75, 13.4, 0xff5d8f], [7.75, -13.4, 0x2dd4bf], [-14.6, -5.6, 0xffb020]].forEach(([x, z, c], i) => { w.add('x', cyl(8), 0xf5f5f0, x, 0, z, 0, 0, 0, 0.05, 2.9, 0.05);
+    w.addFn('f', lathe([[1.75, 0], [1.7, 0.02], [0.9, 0.35], [0, 0.55]], 32, 'umb2'), (cc, px, py, pz) => cc.setHex(Math.floor((Math.atan2(pz, px) + PI) / (PI / 4)) % 2 ? c : 0xffffff), x, 2.4, z, 0, 0, 0, 1.15, 1, 1.15); w.add('g', sph(10), c, x, 3.05, z, 0, 0, 0, 0.1);
+    w.add('m', rcyl(0.8, 0.08, 0.03, 28), 0xc58b52, x, 0.42, z); w.add('m', cyl(8), 0x9a6a3e, x, 0, z, 0, 0, 0, 0.08, 0.42, 0.08); w.solid(x - 0.8, 0, z - 0.8, x + 0.8, 0.5, z + 0.8, { cam: false });
+    w.add('g', rcyl(0.3, 0.06, 0.02, 20), 0xffffff, x - 0.3, 0.5, z + 0.2); w.add('g', sph(12), 0x4cbb3c, x - 0.3, 0.6, z + 0.2, 0, 0, 0, 0.2, 0.12, 0.2); w.add('g', lathe([[0, 0], [0.08, 0], [0.09, 0.2], [0, 0.2]], 14, 'cup'), SUN[i + 2], x + 0.35, 0.5, z - 0.1);
+    [0, 2.1, 4.2].forEach((a) => w.add('f', sph(14), SUN[(i * 3 + a * 2) % 8 | 0], x + Math.cos(a + i) * 1.3, 0.18, z + Math.sin(a + i) * 1.3, 0, 0, 0, 0.45, 0.18, 0.45)); w.add('m', new THREE.CircleGeometry(1.9, 40).rotateX(-PI / 2), i % 2 ? 0xfde68a : 0xfbcfe8, x, 0.085, z); });
+  { const x = -1, z0 = 4.6, z1 = 9.4; w.add('m', rbox(1.8, 0.14, z1 - z0, 0.04), 0xb7773f, x, 0.08, (z0 + z1) / 2); for (let k = 0; k < 8; k++) w.add('m', rbox(1.84, 0.03, 0.06, 0.01), 0x8a5a32, x, 0.16, z0 + 0.3 + k * 0.6);
+    [-0.85, 0.85].forEach((o) => { for (let k = 0; k < 4; k++) w.add('m', cyl(8), 0x7c4a1e, x + o, -0.6, z0 + 0.2 + k * 1.4, 0, 0, 0, 0.08, 1.4, 0.08); w.add('m', rbox(0.08, 0.08, z1 - z0 - 0.4, 0.03), 0x9a6a3e, x + o, 0.75, (z0 + z1) / 2 - 0.2); for (let k = 0; k < 4; k++) w.add('m', cyl(8), 0x9a6a3e, x + o, 0.15, z0 + 0.2 + k * 1.4, 0, 0, 0, 0.05, 0.6, 0.05); });
+    w.solid(x - 0.9, 0, z0, x + 0.9, 0.16, z1, { floor: true }); w.add('x', cyl(6), 0x7c4a1e, x + 0.5, 0.5, z0 + 0.4, 0.6, 0, 0.3, 0.02, 1.6, 0.02); S.fishLine = [x + 0.9, -0.2, z0 - 0.6]; tcrate(w, x - 0.4, 0.16, z0 + 1.2, 0.5, 0x9a6a3e, 'none'); }
+  { const T = w.tf(12, 0, -13, -0.7); T.slab('m', 0xfef3c7, 0, 0.5, 0, 1.8, 0.9, 1.0, 0.12); T.slab('g', 0xffd23f, 0, 1.38, 0, 1.9, 0.08, 1.1, 0.04); [-1, 1].forEach((s2) => { T.add('m', torus(0.3, 20), 0xef4444, s2 * 0.7, 0.32, 0.52, 0, 0, 0, 0.3, 0.3, 0.3); T.add('x', cyl(6), 0xffffff, s2 * 0.85, 1.4, -0.45, 0, 0, 0, 0.03, 1.2, 0.03); });
+    T.add('f', rbox(2.1, 0.08, 1.4, 0.03), 0xffd23f, 0, 2.6, 0, 0.12, 0, 0); for (let k = 0; k < 3; k++) T.add('e', lathe([[0, 0], [0.16, 0], [0.18, 0.5], [0, 0.5]], 16, 'jug'), [0xfff27a, 0xff9fd0, 0x9cf27a][k], -0.55 + k * 0.55, 1.42, 0.1); T.solid(-0.95, 0, -0.55, 0.95, 1.4, 0.55); sign3d(w, 'CACTUS LEMONADE', 12.4, 2.3, -12.4, -0.7, 0.12, 0xdb2777, 0xfff7ed); }
+  { const x = -12.5, z = -11.5; [-0.4, 0.4].forEach((o) => w.add('m', cyl(6), 0x9a6a3e, x + o, 0, z, -0.15, 0, o * 0.3, 0.04, 1.7, 0.04)); w.add('m', cyl(6), 0x9a6a3e, x, 0, z - 0.4, 0.35, 0, 0, 0.04, 1.6, 0.04); w.add('m', rbox(1.0, 0.75, 0.05, 0.02), 0xffffff, x, 1.35, z + 0.05, -0.15, 0, 0);
+    for (let k = 0; k < 6; k++) w.add('e', sph(8), SUN[k], x - 0.3 + (k % 3) * 0.3, 1.2 + Math.floor(k / 3) * 0.3, z + 0.1, 0, 0, 0, 0.1, 0.07, 0.02); w.add('l', sph(10), 0x38bdf8, x + 0.2, 1.55, z + 0.1, 0, 0, 0, 0.18, 0.08, 0.02, 0.2); }
+  for (let i = 0; i < 8; i++) { const a = i / 8 * PI * 2; claypot(w, Math.cos(a) * 16.6, Math.sin(a) * 15.2, 0.9 + (i % 3) * 0.15, SUN[i] === 0xffd23f ? 0xc8693c : [0xc8693c, 0x2dd4bf, 0xe2733f, 0x3b82f6][i % 4], ['flower', 'cactus', 'flower', 'agave'][i % 4]); }
   // sun shells around the square
   [[0, 0.9, -10.5], [-14, 1.2, 0], [14, 1.2, 0], [0, 7.6, -30], [-26, 1.6, -12], [22, 0.9, 10], [-19, 1.4, 19], [26, 1.2, -6]].forEach((p) => sunShell(w, ...p));
 }

@@ -88,7 +88,7 @@ h3{margin:12px 2px 6px;font-size:13px;letter-spacing:2px;opacity:.85;font-weight
 /* ---- Ratita Industries HQ additions ---- */
 .logo .l2{font-size:34px}
 .foot{font-size:12px;opacity:.8;margin-top:8px;text-align:center}
-#hArea{display:inline-block;transition:transform .2s}#hArea.pop{animation:hqPop .45s}
+#hArea{display:inline-block;transition:transform .2s;max-width:calc(100vw - 190px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:top;font-size:14px}#hArea.pop{animation:hqPop .45s}
 @keyframes hqPop{0%{transform:scale(1.25)}100%{transform:scale(1)}}
 #hGoal{margin-top:5px;max-width:min(62vw,360px);background:rgba(40,10,60,.55);border:2px solid rgba(255,255,255,.55);border-radius:12px;padding:4px 9px;font-size:12px;font-weight:800;line-height:1.25;pointer-events:auto;cursor:pointer}
 #hPlayers span{display:inline-block;margin:4px 4px 0 0;background:rgba(255,79,160,.75);border-radius:999px;padding:1px 8px;font-size:12px;font-weight:900}

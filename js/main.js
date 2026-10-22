@@ -1,16 +1,16 @@
 // Grok Torty Town - boot, app state, main loop.
 import * as THREE from 'three';
-import { E, initEngine, render, trackFps } from './engine.js?v=tt6';
-import { initMats } from './mats.js?v=tt6';
-import { initInput, clearEdges, edge, IN } from './input.js?v=tt6';
-import { initAudio, setSound, sfx } from './audio.js?v=tt6';
-import { S, persist } from './save.js?v=tt6';
-import { HUD } from './hud.js?v=tt6';
-import { UI, closePanel } from './ui.js?v=tt6';
-import { Net } from './net.js?v=tt6';
-import { Game } from './game.js?v=tt6';
-import { $ } from './util.js?v=tt6';
-import { loadFont } from './text3d.js?v=tt6';
+import { E, initEngine, render, trackFps } from './engine.js?v=tt7mp';
+import { initMats } from './mats.js?v=tt7mp';
+import { initInput, clearEdges, edge, IN } from './input.js?v=tt7mp';
+import { initAudio, setSound, sfx } from './audio.js?v=tt7mp';
+import { S, persist } from './save.js?v=tt7mp';
+import { HUD } from './hud.js?v=tt7mp';
+import { UI, closePanel } from './ui.js?v=tt7mp';
+import { Net } from './net.js?v=tt7mp';
+import { Game } from './game.js?v=tt7mp';
+import { $ } from './util.js?v=tt7mp';
+import { loadFont } from './text3d.js?v=tt7mp';
 const app = window.__pt = window.__hq = { state: 'boot', paused: true, game: null, ready: false, busy: false, simSpeed: 1 };
 function setLoad(p, t) { const b = $('loadBar'); if (b) b.style.width = p + '%'; if (t) $('loadTxt').textContent = t; }
 async function boot() {

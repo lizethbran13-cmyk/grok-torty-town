@@ -1,10 +1,10 @@
 // Co-op for up to 3 via GrokNet (PeerJS, 5-letter codes). Host-authoritative test schedule; each rat moves itself.
-// Mysteries, gears and hats are saved per player (everyone gets to solve them on their own device).
-import { S, persist } from './save.js?v=tt6';
-import { esc, $ } from './util.js?v=tt6';
-import { sfx } from './audio.js?v=tt6';
-import { panel, closePanel } from './ui.js?v=tt6';
-import { SHIRTS, cleanLook } from './humans.js?v=tt6';
+// Clues are shared: when anyone finds one it lands in everyone's journal, so the mystery is solved together. Gears and hats save per player.
+import { S, persist } from './save.js?v=tt7mp';
+import { esc, $ } from './util.js?v=tt7mp';
+import { sfx } from './audio.js?v=tt7mp';
+import { panel, closePanel } from './ui.js?v=tt7mp';
+import { SHIRTS, cleanLook } from './humans.js?v=tt7mp';
 const col = (L) => '#' + SHIRTS[cleanLook(L && L.look).shirt].toString(16).padStart(6, '0');
 const GN = window.GrokNet;
 export class Net {
@@ -31,7 +31,7 @@ export class Net {
     const list = ps.map((p) => { const L = this.looks[p.pid] || {}; return `<div class="pRow"><span class="sw" style="background:${col(L)}"></span><b>${esc(L.name || p.name)}</b><small>Intern · ${p.slot === 0 ? 'Host' : 'Player ' + (p.slot + 1)}${p.pid === room.pid ? ' (you)' : ''}</small></div>`; }).join('');
     panel(`<div class="topBar"><h2>ROOM <span class="code">${room.code}</span></h2></div><p class="sub">Friends join with code <b>${room.code}</b> (${ps.length}/3)</p><div class="pList">${list}</div>
       <button class="mbtn2" id="bLook">👤 CUSTOMIZE YOUR INTERN</button>
-      <div class="btnRow"><button class="mbtn2" id="bLeave">LEAVE</button><button class="go" id="bGo">▶ EXPLORE</button></div><p class="sub">Everyone explores together. The host's clock runs the sky. Mysteries, biscuits and hats save on each player's own device.</p>`, (c) => {
+      <div class="btnRow"><button class="mbtn2" id="bLeave">LEAVE</button><button class="go" id="bGo">▶ EXPLORE</button></div><p class="sub">Everyone explores together. The host's clock runs the sky. Clues anyone finds go in everyone's journal, so you crack the mystery together. Gears and hats save on your own device.</p>`, (c) => {
       c.querySelector('#bLeave').onclick = () => { this.leave(); app.busy = false; app.toTitle(); };
       c.querySelector('#bLook').onclick = () => { sfx('click'); app.ui.custom(() => this.roomPanel()); };
       c.querySelector('#bGo').onclick = () => { app.busy = false; closePanel(); app.play(); }; }); }
@@ -54,11 +54,13 @@ export class Net {
     if (d.t === 'look' && host) { this.looks[from] = { name: GN.cleanName(d.name), look: cleanLook(d.look), outfit: String(d.outfit || 'none').slice(0, 12) }; this.room.broadcast({ t: 'looks', looks: this.looks }); this.applyLooks(); if (app.state !== 'play') this.roomPanel(); return; }
     if (d.t === 'looks' && !host) { this.looks = d.looks || {}; this.applyLooks(); if (app.state !== 'play') this.roomPanel(); return; }
     if (!g) return;
+    if (d.t === 'clue' && typeof d.id === 'string') { if (host) this.room.broadcast(d); if (from !== (this.room && this.room.pid)) g.friendClue(d.id, GN.cleanName(d.n || 'A friend')); return; }
     if (d.t === 'heli') { if (host) this.room.broadcast(d); return; }
     if (host) { if (d.t === 'p' && Array.isArray(d.s)) { const L = this.looks[from] || { name: 'Visitor' }; g.addRemote(from, L, this.slotOf(from)).applySnap(d.s); } }
     else { if (d.t === 's') { for (const pid in d.ps) { if (pid === this.room.pid) continue; const L = this.looks[pid] || { name: 'Visitor' }; g.addRemote(pid, L, this.slotOf(pid)).applySnap(d.ps[pid]); }
         for (const pid of [...g.players.keys()]) if (!g.players.get(pid).local && !d.ps[pid]) g.removeRemote(pid);
         const off = d.T - g.T; if (Math.abs(off) > 1) g.T = d.T; else g.T += off * 0.3;
         if (d.tod) g.hostTod = d.tod; } } }
+  shareClue(id) { if (!this.online) return; const m = { t: 'clue', id, n: this.myName() }; if (this.room.isHost) this.room.broadcast(m); else this.room.send(m); }
   slotOf(pid) { const p = this.room && this.room.players().find((q) => q.pid === pid); return p ? p.slot : 1; }
 }

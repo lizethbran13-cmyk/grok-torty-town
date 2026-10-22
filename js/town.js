@@ -1,12 +1,12 @@
 // Grok Torty Town: Martina "Torty"'s desert-oasis hometown. A palm-ringed Oasis Square, Market Street, the Burrows (homes),
 // Hot Spring Hill, the Slow-Mo Racetrack, the Lettuce Farm and the Dunes & Canyon edge. 18 enterable buildings, each its own
 // culled region; outdoors batch into big merged chunks, tiny decor goes into far-culled "detail" chunks. All real 3D geometry.
-import { tortuga } from './tortuga.js?v=tt6';
-import { districts } from './districts.js?v=tt6';
+import { tortuga } from './tortuga.js?v=tt7mp';
+import { districts } from './districts.js?v=tt7mp';
 import * as THREE from 'three';
-import * as K from './kit.js?v=tt6';
-import { interiors } from './interiors.js?v=tt6';
-import { underground } from './under.js?v=tt6';
+import * as K from './kit.js?v=tt7mp';
+import { interiors } from './interiors.js?v=tt7mp';
+import { underground } from './under.js?v=tt7mp';
 const { wall, D, G, floor, ceiling, sign3d, rbox, rcyl, lathe, sph, cyl, cone, torus, capsule, tube, leaf, star, heart, blobGeo, pick } = K;
 const R = K.R, PI = Math.PI; let I = null;
 export const FL = 0.02;

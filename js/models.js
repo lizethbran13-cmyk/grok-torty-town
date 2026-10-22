@@ -1,9 +1,9 @@
 // Characters & creatures: smooth high-poly cartoon models built from merged primitives, with animation rigs.
 import * as THREE from 'three';
-import { Builder, P } from './geo.js?v=tt6';
-import { MATS } from './mats.js?v=tt6';
-import { compact } from './compact.js?v=tt6';
-import { rcyl, lathe, sph, cyl, cone, torus, capsule, tube, leaf, wedge, gear, heart, star, blobGeo } from './shapes.js?v=tt6';
+import { Builder, P } from './geo.js?v=tt7mp';
+import { MATS } from './mats.js?v=tt7mp';
+import { compact } from './compact.js?v=tt7mp';
+import { rcyl, lathe, sph, cyl, cone, torus, capsule, tube, leaf, wedge, gear, heart, star, blobGeo } from './shapes.js?v=tt7mp';
 const PI = Math.PI;
 // multi-material builder -> group of meshes
 function MB() { return { f: new Builder(), g: new Builder(), m: new Builder(), x: new Builder(), l: new Builder(), e: new Builder() }; }

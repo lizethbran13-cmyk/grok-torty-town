@@ -1,22 +1,22 @@
 // Grok Torty Town runtime: the town, players, townsfolk, the shuttle cart, ambient desert life, day -> sunset, collectibles,
 // the Sunstone mystery, the Slow-Mo Derby + Harvest Rush (3D mini-games), a hidden puzzle, co-op hooks.
 import * as THREE from 'three';
-import { E, setEnvironment, followShadow, skyUniforms } from './engine.js?v=tt6';
-import { World } from './world.js?v=tt6';
-import { buildTown, regionAt, areaName, REGIONS, DOORS, NEAR, STOPS, TRACK } from './town.js?v=tt6';
-import { UY } from './under.js?v=tt6';
-import { Player } from './player.js?v=tt6';
-import { FX } from './fx.js?v=tt6';
-import { makeRat, animRat, MB, toGroup } from './models.js?v=tt6';
-import { makePup, animPup, birdGeo } from './dogs.js?v=tt6';
-import { makeTortoise, animTortoise, makeRoadrunner, animRoadrunner, makeLizard, animLizard, makeSunstone } from './critters.js?v=tt6';
-import { P } from './geo.js?v=tt6';
-import { rcyl, capsule, torus, sph, cone, heart, star, blobGeo } from './shapes.js?v=tt6';
-import { updateFrustum, inView, LightPool } from './perf.js?v=tt6';
-import { sfx, playMusic } from './audio.js?v=tt6';
-import { S, persist } from './save.js?v=tt6';
-import { NPCS, talk, clueText, SUN_CLUES, HATS, BADGES, GLYPH } from './story.js?v=tt6';
-import { readMove, edge, held, IN } from './input.js?v=tt6';
+import { E, setEnvironment, followShadow, skyUniforms } from './engine.js?v=tt7mp';
+import { World } from './world.js?v=tt7mp';
+import { buildTown, regionAt, areaName, REGIONS, DOORS, NEAR, STOPS, TRACK } from './town.js?v=tt7mp';
+import { UY } from './under.js?v=tt7mp';
+import { Player } from './player.js?v=tt7mp';
+import { FX } from './fx.js?v=tt7mp';
+import { makeRat, animRat, MB, toGroup } from './models.js?v=tt7mp';
+import { makePup, animPup, birdGeo } from './dogs.js?v=tt7mp';
+import { makeTortoise, animTortoise, makeRoadrunner, animRoadrunner, makeLizard, animLizard, makeSunstone } from './critters.js?v=tt7mp';
+import { P } from './geo.js?v=tt7mp';
+import { rcyl, capsule, torus, sph, cone, heart, star, blobGeo } from './shapes.js?v=tt7mp';
+import { updateFrustum, inView, LightPool } from './perf.js?v=tt7mp';
+import { sfx, playMusic } from './audio.js?v=tt7mp';
+import { S, persist } from './save.js?v=tt7mp';
+import { NPCS, talk, clueText, SUN_CLUES, HATS, BADGES, GLYPH } from './story.js?v=tt7mp';
+import { readMove, edge, held, IN } from './input.js?v=tt7mp';
 const PI = Math.PI;
 const TOYS = [[60, 0, 76], [-70, 0, 61], [108, 0, -4]];
 const DAY = 420; // seconds per day -> sunset cycle
@@ -248,7 +248,9 @@ export class Game {
   giveHat(id) { if (S.hats[id]) return; S.hats[id] = 1; persist(); const h = HATS.find((q) => q.id === id); this.toastMsg(`🎩 New hat: ${h ? h.n : id}! (Wear it from the pause menu)`); sfx('win'); }
   badge(id) { if (S.badges[id]) return; S.badges[id] = 1; persist(); this.toastMsg('🏅 Badge: ' + BADGES[id]); }
   checkCrown() { if (S.hats.crown) return; if ((S.q.sun | 0) >= 4 && this.biscGot.size >= this.world.gears.length) { S.hats.crown = 1; persist(); setTimeout(() => { this.toastMsg('👑 GOLD CROWN! Torty Town\'s greatest hero!'); sfx('win'); }, 1500); } }
-  addClue(id) { const nw = !S.clues[id]; S.clues[id] = 1; persist(); this.app.ui.clue(id, clueText(id), nw); if ((S.q.sun | 0) === 0 && nw) setTimeout(() => this.toastMsg('🤔 Hmm… Mayor Shelldon at Town Hall might know what this is about.'), 600); this.recheck(); }
+  addClue(id) { const nw = !S.clues[id]; S.clues[id] = 1; persist(); if (nw && this.app.net) this.app.net.shareClue(id); this.app.ui.clue(id, clueText(id), nw); if ((S.q.sun | 0) === 0 && nw) setTimeout(() => this.toastMsg('🤔 Hmm… Mayor Shelldon at Town Hall might know what this is about.'), 600); this.recheck(); }
+  // co-op: a friend found a clue, so it lands on everyone's journal (the mystery is solved together)
+  friendClue(id, who) { if (S.clues[id] || !clueText(id)) return; S.clues[id] = 1; if ((S.q.sun | 0) === 0) S.q.sun = 1; persist(); this.toastMsg(`🔍 ${who} found a clue! It's in your journal too.`); this.sfx ? this.sfx('check') : 0; this.hud.dirty = true; this.recheck(); }
   recheck() { if ((S.q.sun | 0) === 1 && SUN_CLUES.every((c) => S.clues[c])) { S.q.sun = 2; persist(); this.placeStory(); this.sunPos(); setTimeout(() => this.toastMsg('💡 All 5 clues! Tiny footprints, a "P", warm rocks, a picnic… up Hot Spring Hill!'), 500); } this.hud.dirty = true; }
   gotSun() { S.q.sun = 3; persist(); this.sunPos(); this.fx.confetti(this.me.x, this.me.y + 1.5, this.me.z, 50); sfx('win'); this.toastMsg('☀️ You have the SUNSTONE! Carry it back to Mayor Shelldon.'); this.npc.pebble.hidden = true; this.hud.dirty = true; }
   solveSun() { S.q.sun = 4; persist(); this.sunPos(); this.placeStory(); this.party.visible = true; this.giveHat('detective'); this.badge('sun'); this.fx.confetti(this.me.x, this.me.y + 1.5, this.me.z, 120); this.app.ui.finale(); this.checkCrown(); this.hud.dirty = true; }
